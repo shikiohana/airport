@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AirportApplication</string>
+    <string name="action_settings">Settings</string>
+
+
+    <!--登陆页面-->
+    <string name="login">登&#160;陆</string>
+    <string name="register">注&#160;册</string>
+    <string name="username">用户名:</string>
+    <string name="password">密&#160;&#160;&#160;&#160;码:</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="regain_password">忘记密码</string>
+    <string name="server">服务器:</string>
+    <string name="account_set">账&#160;&#160;&#160;&#160;套:</string>
+    <!--工单页面-->
+    <string name="company">航空公司</string>
+    <string name="on_plan">计划工单</string>
+    <string name="not_on_plan">非计划工单</string>
+</resources>
