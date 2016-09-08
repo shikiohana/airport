@@ -2,13 +2,15 @@
     <string name="app_name">AirportApplication</string>
     <string name="action_settings">Settings</string>
 
-
+    <!--首页-->
+    <string name="work_order">工单</string>
+    <string name="mine">我的</string>
     <!--登陆页面-->
     <string name="login">登&#160;陆</string>
-    <string name="register">注&#160;册</string>
+
     <string name="username">用户名:</string>
     <string name="password">密&#160;&#160;&#160;&#160;码:</string>
-    <string name="confirm_password">确认密码</string>
+
     <string name="regain_password">忘记密码</string>
     <string name="server">服务器:</string>
     <string name="account_set">账&#160;&#160;&#160;&#160;套:</string>
@@ -16,4 +18,17 @@
     <string name="company">航空公司</string>
     <string name="on_plan">计划工单</string>
     <string name="not_on_plan">非计划工单</string>
+    <string name="all_plan">全部工单</string>
+    <!--个人中心-->
+    <string name="done">已完成工单</string>
+    <string name="not_done">未完成工单</string>
+    <string name="notification">通知</string>
+    <string name="logout">退出</string>
+    <!--照相dialog-->
+    <string name="take_photo">拍照</string>
+    <string name="album">打开相册</string>
+    <string name="cancle">取消</string>
+    <!--相册-->
+    <string name="more">更多</string>
+    <string name="preview">预览</string>
 </resources>

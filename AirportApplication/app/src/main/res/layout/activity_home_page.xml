@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+   <!-- <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+
+        android:gravity="center"
+        android:padding="15dp"
+        android:id="@+id/home_page_title"/>-->
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/container"></android.support.v4.view.ViewPager>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/bottom_menu">
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_weight="1"
+            android:text="@string/work_order"
+            android:gravity="center_horizontal"
+            android:button="@null"
+            android:textSize="16sp"
+            android:textColor="@drawable/text_change"
+            android:id="@+id/work_order"
+            />
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_weight="1"
+            android:text="@string/mine"
+            android:id="@+id/mine"
+            android:textColor="@drawable/text_change"
+            android:textSize="16sp"
+            android:gravity="center_horizontal"
+            android:button="@null"
+            />
+    </RadioGroup>
+</LinearLayout>

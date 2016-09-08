@@ -1,31 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?><!--登陆页面-->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/back_ground" />
 
     <LinearLayout
         android:id="@+id/linerlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:focusableInTouchMode="true"
         android:focusable="true"
-        android:padding="10dp">
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="230dp"
             android:background="@drawable/edit_corner"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/server"
+                android:drawablePadding="4dp"
                 android:gravity="start|center_vertical"
-                android:padding="10dp"
-                android:text="@string/server" />
+                android:paddingLeft="4dp"
+                android:text="@string/server"
+                android:textColor="@color/text_grey" />
 
             <EditText
                 android:id="@+id/edit_server"
@@ -33,6 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:background="@null"
                 android:imeOptions="actionDone"
                 android:padding="10dp" />
@@ -41,17 +55,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/edit_corner"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/account_set"
+                android:drawablePadding="4dp"
                 android:gravity="start|center_vertical"
-                android:padding="10dp"
-                android:text="@string/account_set" />
+                android:paddingLeft="4dp"
+                android:text="@string/account_set"
+                android:textColor="@color/text_grey" />
 
             <EditText
                 android:id="@+id/edit_account_set"
@@ -59,6 +77,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:background="@null"
                 android:imeOptions="actionDone"
                 android:padding="10dp" />
@@ -67,18 +86,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/edit_corner"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/username"
+                android:drawablePadding="4dp"
                 android:gravity="start|center_vertical"
-                android:padding="10dp"
-
-                android:text="@string/username" />
+                android:paddingLeft="4dp"
+                android:text="@string/username"
+                android:textColor="@color/text_grey" />
 
             <EditText
                 android:id="@+id/edit_username"
@@ -87,6 +109,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
                 android:background="@null"
+                android:singleLine="true"
                 android:imeOptions="actionDone"
                 android:padding="10dp" />
         </LinearLayout>
@@ -94,17 +117,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/edit_corner"
-            android:orientation="horizontal"
-            android:padding="10dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/password"
+                android:drawablePadding="4dp"
                 android:gravity="start|center_vertical"
-                android:padding="10dp"
-                android:text="@string/password" />
+                android:paddingLeft="4dp"
+                android:text="@string/password"
+                android:textColor="@color/text_grey" />
 
             <EditText
                 android:id="@+id/edit_password"
@@ -112,6 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:background="@null"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
@@ -122,9 +150,25 @@
             android:id="@+id/login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
+            android:background="@drawable/solid_corner"
             android:gravity="center"
             android:padding="10dp"
-            android:text="@string/login" />
+            android:text="@string/login"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginRight="20dp"
+            android:padding="10dp"
+            android:text="@string/regain_password"
+            android:textColor="@color/deep_blue"
+            android:textSize="12sp" />
     </LinearLayout>
-</ScrollView>
+</RelativeLayout>
+
