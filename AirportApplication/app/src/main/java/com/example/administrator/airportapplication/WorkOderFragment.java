@@ -1,11 +1,13 @@
 package com.example.administrator.airportapplication;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +18,13 @@ import android.widget.Spinner;
 
 import com.example.administrator.adapter.CompanyAdapter;
 import com.example.administrator.adapter.WorkOrderAdapter;
+import com.example.administrator.javabean.Company;
+import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.DividerItemDecoration;
+import com.example.administrator.utils.HttpUtils;
+import com.example.administrator.utils.JsonHelper;
+
+import java.util.ArrayList;
 
 /**
  * 工单页面
@@ -31,6 +39,7 @@ public class WorkOderFragment extends Fragment {
     private RadioGroup radioGroup;
     private CompanyAdapter companyAdapter;
     private View parent;
+    private ArrayList<Company> list;
 
 
     @Nullable
@@ -39,6 +48,7 @@ public class WorkOderFragment extends Fragment {
         parent = inflater.inflate(R.layout.activity_work_orders_list, null);
         inni(parent);
         inniRecyclerView("");
+        inniCompanyList();
         return parent;
     }
 
@@ -53,7 +63,7 @@ public class WorkOderFragment extends Fragment {
         notOnPlan = (RadioButton) view.findViewById(R.id.not_on_plan);
         allPlan = (RadioButton) view.findViewById(R.id.all_plan);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
-        //  swipeRefreshLayout.setOnRefreshListener();
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -102,8 +112,9 @@ public class WorkOderFragment extends Fragment {
      * 更新航空公司
      */
     private void inniCompanyList() {
-        companyAdapter = new CompanyAdapter();
-        companyList.setAdapter(companyAdapter);
+        CompanyTask companyTask = new CompanyTask();
+        companyTask.execute("");
+
     }
 
     /**
@@ -120,5 +131,35 @@ public class WorkOderFragment extends Fragment {
 
     }
 
+    SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    };
 
+
+    class CompanyTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            HttpUtils httpUtils = new HttpUtils();
+            String result = httpUtils.doGet(Constants.BASE_URL + "api/SYSCustomerAPI");
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.i("s", s + "");
+            if (s != null && !s.equals("")) {
+                String json = JsonHelper.jsonFormat(s);
+                Log.i("json", json + "");
+                list = (ArrayList) JsonHelper.jsonList(json, Company.class);
+
+                companyAdapter = new CompanyAdapter(getContext(), list);
+                companyList.setAdapter(companyAdapter);
+
+            }
+            super.onPostExecute(s);
+        }
+    }
 }

@@ -10,5 +10,5 @@
     <color name="light_grey">#C0C0C0</color>
     <color name="deep_blue">#037fbc</color>
     <color name="light_blue">#67ccff</color>
-
+    <color name="button_grey">#a4a3a3</color>
 </resources>
