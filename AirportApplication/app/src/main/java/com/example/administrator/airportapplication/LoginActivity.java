@@ -3,7 +3,6 @@ package com.example.administrator.airportapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,11 +18,12 @@ import android.widget.Toast;
 import com.example.administrator.javabean.LoginResult;
 import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.HttpUtils;
-import com.example.administrator.utils.JsonHelper;
+import com.example.administrator.utils.TokenKeeper;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xutils.common.Callback;
 
 /**
  * 登陆页面
@@ -34,7 +34,7 @@ public class LoginActivity extends Activity {
     private LinearLayout linearLayout;
     private TextView login;
     private HttpUtils httpUtils;
-    private LoginTask loginTask;
+    public static final String LOGINAPI = "api/LoginUser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class LoginActivity extends Activity {
         login = (TextView) findViewById(R.id.login);
         login.setOnClickListener(onClickListener);
         linearLayout.setOnClickListener(onClickListener);
-        httpUtils = new HttpUtils();
+
         //监听输入框内容
         password.addTextChangedListener(textWatcher);
         userName.addTextChangedListener(textWatcher);
@@ -88,14 +88,54 @@ public class LoginActivity extends Activity {
      */
     private void login() {
         setUnCLickable();
-        loginTask = new LoginTask();
+        httpUtils = new HttpUtils();
+
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Login", userName.getText().toString());
             jsonObject.put("PWD", password.getText().toString());
             String json = jsonObject.toString();
             Log.i("json", json);
-            loginTask.execute(json);
+            httpUtils.postJSON(Constants.BASE_URL + LOGINAPI, json, new Callback.CommonCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    if (result != null && !result.equals("")) {
+                        //  String format = JsonHelper.jsonFormat(result);
+                        Gson gson = new Gson();
+                        Log.i("format", result);
+                        LoginResult loginResult = gson.fromJson(result, LoginResult.class);
+                        String token = loginResult.getData().getToken();
+                        if (token != null && !token.equals("")) {
+                            Log.i("keeper", token + "");
+                            TokenKeeper.saveToken(loginResult, LoginActivity.this);
+                            startActivity(new Intent(LoginActivity.this, HomePageActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
+                            setClickable();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "网络连接异常", Toast.LENGTH_SHORT).show();
+                        setClickable();
+                    }
+                }
+
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
+                    // Log.i("json", ex.getMessage().toString()+ex.getCause()+"");
+                }
+
+                @Override
+                public void onCancelled(CancelledException cex) {
+                    setClickable();
+                }
+
+                @Override
+                public void onFinished() {
+                    setClickable();
+                }
+            });
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -126,41 +166,6 @@ public class LoginActivity extends Activity {
         }
     };
 
-    /**
-     * 登陆任务
-     */
-    class LoginTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPostExecute(String s) {
-            Log.i("s", s);
-            if (s != null && !s.equals("")) {
-                String format = JsonHelper.jsonFormat(s);
-                Gson gson = new Gson();
-                Log.i("format", format);
-                LoginResult result = gson.fromJson(format, LoginResult.class);
-                String token = result.getToken();
-                if (token != null && !token.equals("")) {
-
-                    startActivity(new Intent(LoginActivity.this, HomePageActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
-                    setClickable();
-                }
-            } else {
-                Toast.makeText(LoginActivity.this, "网络连接异常", Toast.LENGTH_SHORT).show();
-                setClickable();
-            }
-
-
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String result = httpUtils.httpPost(Constants.BASE_URL + "api/LoginUser", strings[0]);
-            return result != null ? result : "";
-        }
-    }
 
     /**
      * 设置登陆按钮不可点击

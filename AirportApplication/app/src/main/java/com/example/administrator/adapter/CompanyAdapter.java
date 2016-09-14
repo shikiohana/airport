@@ -10,16 +10,16 @@ import android.widget.TextView;
 import com.example.administrator.airportapplication.R;
 import com.example.administrator.javabean.Company;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by quick_tech cpc on 2016/9/7.
  */
 public class CompanyAdapter extends BaseAdapter {
-    private ArrayList<Company> list;
+    private List<Company.DataBean> list;
     private Context context;
     private LayoutInflater inflater;
-    public CompanyAdapter(Context context,ArrayList<Company> list){
+    public CompanyAdapter(Context context,List<Company.DataBean> list){
         this.list=list;
         this.context=context;
         inflater=LayoutInflater.from(context);

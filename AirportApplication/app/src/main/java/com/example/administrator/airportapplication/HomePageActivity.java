@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.example.administrator.adapter.HomePagerAdapter;
 import com.example.administrator.utils.PhotoUtils;
@@ -18,12 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 首页
  * Created by quick_tech cpc on 2016/9/8.
  */
 public class HomePageActivity extends FragmentActivity {
     private ViewPager viewPager;
     private RadioGroup bottomMenu;
-    private TextView title;
+
     private WorkOderFragment workOderFragment;
     private HomePagerAdapter homePagerAdapter;
     private FragmentManager fragmentManager;
@@ -44,7 +44,7 @@ public class HomePageActivity extends FragmentActivity {
      */
     private void inni() {
         viewPager = (ViewPager) findViewById(R.id.container);
-     //   title = (TextView) findViewById(R.id.home_page_title);
+
         bottomMenu = (RadioGroup) findViewById(R.id.bottom_menu);
         workOrder=(RadioButton)findViewById(R.id.work_order);
         mine=(RadioButton)findViewById(R.id.mine);

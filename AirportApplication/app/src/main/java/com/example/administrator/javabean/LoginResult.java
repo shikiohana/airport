@@ -4,93 +4,141 @@ package com.example.administrator.javabean;
  * Created by quick_tech cpc on 2016/9/7.
  */
 public class LoginResult {
+
+
     /**
-     * token : 1a5d32sd1f5s
-     * result : {"Login":"admin","PWD":"admin","CNName":"陈佩超","ENName":"","Gender":"","Employee_AId":""}
+     * Token : 333FB06077A7137D2E0218C59E6DB880E341F5A499D5AF483C47ED2C207F32790230E0D0B61D3A0F
+     * LoginInfo : {"Login":"admin","PWD":"admin","CNName":"陈佩超","ENName":"chengpeichao","Gender":"男","Employee_AId":"54bf6567-1007-11d1-b0aa-444553540000"}
      */
 
-    private String token;
+    private DataBean Data;
     /**
-     * Login : admin
-     * PWD : admin
-     * CNName : 陈佩超
-     * ENName :
-     * Gender :
-     * Employee_AId :
+     * Data : {"Token":"333FB06077A7137D2E0218C59E6DB880E341F5A499D5AF483C47ED2C207F32790230E0D0B61D3A0F","LoginInfo":{"Login":"admin","PWD":"admin","CNName":"陈佩超","ENName":"chengpeichao","Gender":"男","Employee_AId":"54bf6567-1007-11d1-b0aa-444553540000"}}
+     * ErrorCode : 0
+     * ErrorMessage :
+     * Success : true
      */
 
-    private ResultBean result;
+    private int ErrorCode;
+    private String ErrorMessage;
+    private boolean Success;
 
-    public String getToken() {
-        return token;
+    public DataBean getData() {
+        return Data;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setData(DataBean Data) {
+        this.Data = Data;
     }
 
-    public ResultBean getResult() {
-        return result;
+    public int getErrorCode() {
+        return ErrorCode;
     }
 
-    public void setResult(ResultBean result) {
-        this.result = result;
+    public void setErrorCode(int ErrorCode) {
+        this.ErrorCode = ErrorCode;
     }
 
-    public static class ResultBean {
-        private String Login;
-        private String PWD;
-        private String CNName;
-        private String ENName;
-        private String Gender;
-        private String Employee_AId;
+    public String getErrorMessage() {
+        return ErrorMessage;
+    }
 
-        public String getLogin() {
-            return Login;
+    public void setErrorMessage(String ErrorMessage) {
+        this.ErrorMessage = ErrorMessage;
+    }
+
+    public boolean isSuccess() {
+        return Success;
+    }
+
+    public void setSuccess(boolean Success) {
+        this.Success = Success;
+    }
+
+    public static class DataBean {
+        private String Token;
+        /**
+         * Login : admin
+         * PWD : admin
+         * CNName : 陈佩超
+         * ENName : chengpeichao
+         * Gender : 男
+         * Employee_AId : 54bf6567-1007-11d1-b0aa-444553540000
+         */
+
+        private LoginInfoBean LoginInfo;
+
+        public String getToken() {
+            return Token;
         }
 
-        public void setLogin(String Login) {
-            this.Login = Login;
+        public void setToken(String Token) {
+            this.Token = Token;
         }
 
-        public String getPWD() {
-            return PWD;
+        public LoginInfoBean getLoginInfo() {
+            return LoginInfo;
         }
 
-        public void setPWD(String PWD) {
-            this.PWD = PWD;
+        public void setLoginInfo(LoginInfoBean LoginInfo) {
+            this.LoginInfo = LoginInfo;
         }
 
-        public String getCNName() {
-            return CNName;
-        }
+        public static class LoginInfoBean {
+            private String Login;
+            private String PWD;
+            private String CNName;
+            private String ENName;
+            private String Gender;
+            private String Employee_AId;
 
-        public void setCNName(String CNName) {
-            this.CNName = CNName;
-        }
+            public String getLogin() {
+                return Login;
+            }
 
-        public String getENName() {
-            return ENName;
-        }
+            public void setLogin(String Login) {
+                this.Login = Login;
+            }
 
-        public void setENName(String ENName) {
-            this.ENName = ENName;
-        }
+            public String getPWD() {
+                return PWD;
+            }
 
-        public String getGender() {
-            return Gender;
-        }
+            public void setPWD(String PWD) {
+                this.PWD = PWD;
+            }
 
-        public void setGender(String Gender) {
-            this.Gender = Gender;
-        }
+            public String getCNName() {
+                return CNName;
+            }
 
-        public String getEmployee_AId() {
-            return Employee_AId;
-        }
+            public void setCNName(String CNName) {
+                this.CNName = CNName;
+            }
 
-        public void setEmployee_AId(String Employee_AId) {
-            this.Employee_AId = Employee_AId;
+            public String getENName() {
+                return ENName;
+            }
+
+            public void setENName(String ENName) {
+                this.ENName = ENName;
+            }
+
+            public String getGender() {
+                return Gender;
+            }
+
+            public void setGender(String Gender) {
+                this.Gender = Gender;
+            }
+
+            public String getEmployee_AId() {
+                return Employee_AId;
+            }
+
+            public void setEmployee_AId(String Employee_AId) {
+                this.Employee_AId = Employee_AId;
+            }
         }
     }
 }

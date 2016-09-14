@@ -2,6 +2,9 @@ package com.example.administrator.utils;
 
 import android.util.Log;
 
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -134,5 +137,20 @@ public class HttpUtils {
         return null;
 
     }
+
+    /**
+     * 上传json参数
+     * @param url
+     * @param json
+     * @param callback
+     */
+    public void postJSON(String url,String json,org.xutils.common.Callback.CommonCallback<String> callback){
+        Log.i("url",url);
+        RequestParams params = new RequestParams(url);
+        params.setAsJsonContent(true);
+        params.setBodyContent(json);
+        x.http().post(params,callback);
+    }
+
 
 }

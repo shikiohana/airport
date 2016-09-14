@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.example.administrator.utils.PhotoUtils;
 
 /**
+ * 个人中心
  * Created by quick_tech cpc on 2016/9/8.
  */
 public class MineFragment extends Fragment {
