@@ -73,7 +73,10 @@
             android:launchMode="singleTop"></activity>
         <activity android:name=".RemarkActivity"
             android:launchMode="singleTop"></activity>
-
+        <activity android:name=".NotPlanDetailActivity"
+            android:launchMode="singleTop"></activity>
+        <activity android:name=".ActivityMoreDetail"
+            android:launchMode="singleTop"></activity>
 
         <!-- 个推SDK配置开始 -->
         <!-- 配置的第三方参数属性 -->

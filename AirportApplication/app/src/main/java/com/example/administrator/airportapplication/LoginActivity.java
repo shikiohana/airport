@@ -1,6 +1,7 @@
 package com.example.administrator.airportapplication;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,12 +36,26 @@ public class LoginActivity extends Activity {
     private TextView login;
     private HttpUtils httpUtils;
     public static final String LOGINAPI = "api/LoginUser";
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         inni();
+        hasLogin();
+
+    }
+
+    /**
+     * 是否已经登陆，是，直接登陆，不是，重新登陆
+     */
+    private void hasLogin() {
+        if (TokenKeeper.isLogining(this)) {
+            userName.setText(TokenKeeper.getUser(this));
+            password.setText(TokenKeeper.getUser(this));
+            login();
+        }
     }
 
     /**
@@ -68,6 +83,7 @@ public class LoginActivity extends Activity {
             switch (view.getId()) {
                 case R.id.login:
                     //登陆
+
                     login();
                     break;
                 case R.id.linerlayout:
@@ -88,6 +104,7 @@ public class LoginActivity extends Activity {
      */
     private void login() {
         setUnCLickable();
+        showProgress();
         httpUtils = new HttpUtils();
 
         try {
@@ -122,16 +139,26 @@ public class LoginActivity extends Activity {
 
                 @Override
                 public void onError(Throwable ex, boolean isOnCallback) {
-                    // Log.i("json", ex.getMessage().toString()+ex.getCause()+"");
+
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    setClickable();
                 }
 
                 @Override
                 public void onCancelled(CancelledException cex) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                     setClickable();
                 }
 
                 @Override
                 public void onFinished() {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                     setClickable();
                 }
             });
@@ -246,5 +273,9 @@ public class LoginActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
-
+    private void showProgress() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("正在登陆");
+        progressDialog.show();
+    }
 }

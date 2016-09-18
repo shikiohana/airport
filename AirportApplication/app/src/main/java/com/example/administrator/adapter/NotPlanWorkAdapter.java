@@ -6,7 +6,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -84,12 +83,10 @@ public class NotPlanWorkAdapter extends RecyclerView.Adapter{
 
     class OrderHolder extends RecyclerView.ViewHolder {
         TextView user, orderContent;
-        ImageView orderType;
         TextView content,aid;
         public OrderHolder(View itemView) {
             super(itemView);
             user = (TextView) itemView.findViewById(R.id.work_order_username);
-            orderType = (ImageView) itemView.findViewById(R.id.work_order_type);
             orderContent = (TextView) itemView.findViewById(R.id.work_order_content);
             aid=(TextView)itemView.findViewById(R.id.aid);
             content=(TextView)itemView.findViewById(R.id.content);

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -24,6 +23,8 @@ import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,17 +37,17 @@ public class OrderDetailsActivity extends Activity {
     private String code = null;
     private CheckBox selectAll;
     private RecyclerView recyclerView;
-    private TextView orderCode, next,startTime,endTime;
+    private TextView orderCode, next,startTime,endTime,planDue,actualDue;//工单编号，完成，开始时间，结束时间，计划工期，实际工期
     private ImageView back;
     private final static String ORDERDETAILS = "api/WorkOrder/";
-   // private SwipeRefreshLayout refreshLayout;
     private OrderDetailsAdapter orderDetailsAdapter;
     public static final String POSITION = "air_position";
     public static final String CONTENT="remark_content";
+    public static final String IMGS="remark_imgs";
     public static final int REQUEST = 2698;
-
+    public static final int DETAIL=3568;
     private List<OrderDetails.DataBean.DetailBean> list;
-
+    private HashMap<Integer,ArrayList<String >> imgs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +57,7 @@ public class OrderDetailsActivity extends Activity {
         if (intent != null) {
             code = intent.getStringExtra(WorkOderFragment.DATABEAN);
             if (code != null) {
-                orderCode.setText("工单编号:  " + code);
+                orderCode.setText(code);
                 inniDetals(code);
             }
         } else {
@@ -64,26 +65,23 @@ public class OrderDetailsActivity extends Activity {
         }
 
     }
-
     /**
      * 初始化控件
      */
     private void inni() {
-
         next = (TextView) findViewById(R.id.next_step);
         orderCode = (TextView) findViewById(R.id.order_code);
         startTime=(TextView)findViewById(R.id.start_time);
         endTime=(TextView)findViewById(R.id.end_time);
         back = (ImageView) findViewById(R.id.back);
+        planDue=(TextView) findViewById(R.id.plan_due);
+        actualDue=(TextView)findViewById(R.id.actual_due);
         selectAll = (CheckBox) findViewById(R.id.select_all);
         recyclerView = (RecyclerView) findViewById(R.id.order_detail_list);
-    //    refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_details);
-        //监听下拉刷新
-   //     refreshLayout.setOnRefreshListener(onRefreshListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
-
         back.setOnClickListener(onClickListener);
+        imgs=new HashMap<>();
     }
 
     /**
@@ -117,22 +115,19 @@ public class OrderDetailsActivity extends Activity {
                 Gson gson = new Gson();
                 OrderDetails orderDetails = gson.fromJson(result, OrderDetails.class);
                 list = orderDetails.getData().getDetail();
-                startTime.setText("开始日期: "+orderDetails.getData().getBillDate());
-                endTime.setText("截止日期: "+orderDetails.getData().getOrderFinishDate());
+
+                startTime.setText(orderDetails.getData().getBillDate());
+                endTime.setText(orderDetails.getData().getOrderFinishDate());
+                planDue.setText(orderDetails.getData().getSchedulWork()+"天");
                 orderDetailsAdapter = new OrderDetailsAdapter(list);
                 orderDetailsAdapter.setOnClicked(onClicked);
                 recyclerView.setAdapter(orderDetailsAdapter);
-             /*   selectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        setSelectAll();
-                    }
-                });*/
+
                 selectAll.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         setSelectAll();
-                        Log.i("checked",selectAll.isChecked()+"");
+
                     }
                 });
             }
@@ -149,28 +144,22 @@ public class OrderDetailsActivity extends Activity {
 
             @Override
             public void onFinished() {
-                //refreshLayout.setRefreshing(false);
+
                 selectAll.setChecked(false);
             }
         });
     }
 
-    /**
-     * 下拉刷新
-     */
-   /* SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefresh() {
-            if (code != null) {
-                inniDetals(code);
-            }
 
-        }
-    };*/
     /**
      * listItem的点击事件
      */
     OrderDetailsAdapter.OnClicked onClicked = new OrderDetailsAdapter.OnClicked() {
+        /**
+         * 设置选中状态
+         * @param view
+         * @param position
+         */
         @Override
         public void checked(View view, int position) {
             if (orderDetailsAdapter.getMaps().get(position)) {
@@ -189,12 +178,31 @@ public class OrderDetailsActivity extends Activity {
             orderDetailsAdapter.notifyDataSetChanged();
         }
 
+        /**
+         * 跳转备注页面
+         * @param view
+         * @param position
+         */
         @Override
         public void clicked(View view, int position) {
             //跳转编辑备注页面
             Intent intent = new Intent(OrderDetailsActivity.this, RemarkActivity.class);
             intent.putExtra(POSITION, position);
+            intent.putExtra(CONTENT,orderDetailsAdapter.getRemarks().get(position));
             startActivityForResult(intent, REQUEST);
+        }
+
+        /**
+         * 如果有更详细的细节，则跳转
+         * @param view
+         * @param position
+         */
+        @Override
+        public void detail(View view,int position){
+            Intent intent = new Intent(OrderDetailsActivity.this, ActivityMoreDetail.class);
+            intent.putExtra(POSITION, position);
+            intent.putExtra(CONTENT,orderDetailsAdapter.getRemarks().get(position));
+            startActivityForResult(intent, DETAIL);
         }
     };
 
@@ -228,11 +236,27 @@ public class OrderDetailsActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode==resultCode){
-            String content=data.getStringExtra(CONTENT);
-            if(content!=null){
-                orderDetailsAdapter.getRemarks().put(data.getIntExtra(POSITION,0),content);
-                orderDetailsAdapter.notifyDataSetChanged();
+            switch (requestCode){
+                case REQUEST:
+                    //如果是备注请求
+                    String content=data.getStringExtra(CONTENT);
+                    if(content!=null){
+                        int position=data.getIntExtra(POSITION,0);
+                        orderDetailsAdapter.getRemarks().put(position, content);
+                        orderDetailsAdapter.notifyDataSetChanged();
+                        ArrayList<String> list=data.getStringArrayListExtra(IMGS);
+                        if(list!=null&&list.size()>0){
+                            imgs.put(position,data.getStringArrayListExtra(IMGS));
+                        }
+
+                    }
+                    break;
+                case DETAIL:
+                    break;
+                default:
+                    break;
             }
+
 
         }
     }

@@ -1,6 +1,5 @@
 package com.example.administrator.airportapplication;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,8 +9,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.administrator.adapter.HomePagerAdapter;
-import com.example.administrator.utils.PhotoUtils;
-import com.yuyh.library.imgsel.ImgSelActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +48,7 @@ public class HomePageActivity extends FragmentActivity {
         bottomMenu.setOnCheckedChangeListener(onCheckedChangeListener);
         //默认工单页面为选中
         workOrder.setChecked(true);
+
     }
 
     /**
@@ -106,16 +104,5 @@ public class HomePageActivity extends FragmentActivity {
             }
         }
     };
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-     //   StringBuilder tvResult=null;
-        // 图片选择结果回调
-        if (requestCode == PhotoUtils.GET_PHOTO && resultCode == RESULT_OK && data != null) {
-            List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
-            for (String path : pathList) {
-               // tvResult.append(path + "\n");
-            }
-        }
-    }
+
 }

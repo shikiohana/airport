@@ -37,6 +37,8 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+import tourguide.tourguide.TourGuide;
+
 /**
  * 工单页面
  * Created by quick_tech cpc on 2016/9/5.
@@ -59,7 +61,7 @@ public class WorkOderFragment extends Fragment {
     private static final String NOTONPLAN = "api/BllUnPlanOrderMaster/";
     public static final String DATABEAN = "databean";
 
-
+    private TourGuide mTourGuideHandler;
     private List<PlanOrder.DataBean> planList;
     private List<NotPlanOrder.DataBean> notPlanList;
     private Company.DataBean nowChosen;
@@ -108,12 +110,20 @@ public class WorkOderFragment extends Fragment {
         });
         onPlan.setChecked(true);
         companyList.setOnItemSelectedListener(onItemSelectedListener);
+
+      /*  mTourGuideHandler= TourGuide.init(getActivity()).with(TourGuide.Technique.Click)
+                .setPointer(new Pointer())
+                .setToolTip(new ToolTip().setTitle("点击切换航空公司"))
+                .setOverlay(new Overlay())
+                .playOn(companyList);*/
+
     }
 
     /**
      * 更新 plan
      */
     private void updatePlant() {
+        swipeRefreshLayout.setRefreshing(true);
         RequestParams plan = new RequestParams(Constants.BASE_URL + PLANLIST + nowChosen.getCustomerCode());
 
         plan.addHeader("login",TokenKeeper.getUser(getContext()));
@@ -121,6 +131,7 @@ public class WorkOderFragment extends Fragment {
         x.http().get(plan, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                Log.i("plan",result);
                 if (result != null && !result.equals("")) {
                     Gson gson = new Gson();
                     PlanOrder planOrder = gson.fromJson(result, PlanOrder.class);
@@ -158,12 +169,14 @@ public class WorkOderFragment extends Fragment {
      * 更新非plan
      */
     private void updateNotPlan(){
+        swipeRefreshLayout.setRefreshing(true);
         RequestParams notPlan = new RequestParams(Constants.BASE_URL + NOTONPLAN + nowChosen.getCustomerCode());
         notPlan.addHeader("login", TokenKeeper.getUser(getContext()));
         notPlan.addHeader("token",TokenKeeper.getToken(getContext()));
         x.http().get(notPlan, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                Log.i("notPlan",result);
                 if (result != null && !result.equals("")) {
                     Gson gson = new Gson();
                     NotPlanOrder notPlanOrder = gson.fromJson(result, NotPlanOrder.class);
@@ -212,6 +225,7 @@ public class WorkOderFragment extends Fragment {
         views.add(notPlan);
         WorkViewPagerAdapter pagerAdapter = new WorkViewPagerAdapter(views);
         viewPager.setAdapter(pagerAdapter);
+
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -242,9 +256,11 @@ public class WorkOderFragment extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             //根据选择的航空公司更新recyclerview
+
             nowChosen=list.get(i);
             updatePlant();
             updateNotPlan();
+
         }
 
         @Override
@@ -273,8 +289,8 @@ public class WorkOderFragment extends Fragment {
         @Override
         public void itemCLicked(View view, int position) {
             NotPlanOrder.DataBean dataBean = (NotPlanOrder.DataBean) view.getTag();
-            Intent intent = new Intent(getActivity(), OrderDetailsActivity.class);
-            intent.putExtra(DATABEAN, dataBean.getBillCode());
+            Intent intent = new Intent(getActivity(), NotPlanDetailActivity.class);
+            intent.putExtra(DATABEAN, dataBean);
 
             startActivity(intent);
         }

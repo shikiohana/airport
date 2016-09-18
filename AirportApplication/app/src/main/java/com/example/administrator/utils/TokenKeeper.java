@@ -2,6 +2,7 @@ package com.example.administrator.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.example.administrator.javabean.LoginResult;
@@ -24,7 +25,7 @@ public class TokenKeeper {
     public static final String AID = "user_aid";//员工ID
     public static final String HASTOKEN = "token_not_null";//是否存在token;
     public static final String AIRPORT_TOKEN = "air_port_quick";
-
+    public static final String PASS="login_pass";
 
     /**
      * 保存token
@@ -45,6 +46,7 @@ public class TokenKeeper {
         editor.putString(EN_NAME, loginInfoBean.getENName());
         editor.putString(GENDER, loginInfoBean.getGender());
         editor.putString(AID, loginInfoBean.getEmployee_AId());
+        editor.putString(PASS,loginInfoBean.getPWD());
         editor.commit();
         Log.i("tokensave", "success");
     }
@@ -77,9 +79,35 @@ public class TokenKeeper {
         SharedPreferences sharedPreferences = context.getSharedPreferences(AIRPORT_TOKEN, Context.MODE_PRIVATE);
         boolean hasToken = sharedPreferences.getBoolean(HASTOKEN, false);
         if (hasToken) {
-            String token = sharedPreferences.getString(ACCOUNT, "");
-            return token;
+            String account = sharedPreferences.getString(ACCOUNT, "");
+            return account;
         } else {
+            AlertDialog.Builder builder=new AlertDialog.Builder(context);
+            builder.setTitle("身份认证已过期，请重新登陆");
+            AlertDialog alertDialog=builder.create();
+            alertDialog.show();
+            return null;
+        }
+
+    }
+
+    /**
+     * 获取token
+     *
+     * @param context
+     * @return 无返回null, 存在返回token的String对象
+     */
+    public static String getPWD(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AIRPORT_TOKEN, Context.MODE_PRIVATE);
+        boolean hasToken = sharedPreferences.getBoolean(HASTOKEN, false);
+        if (hasToken) {
+            String account = sharedPreferences.getString(PASS, "");
+            return account;
+        } else {
+            AlertDialog.Builder builder=new AlertDialog.Builder(context);
+            builder.setTitle("身份认证已过期，请重新登陆");
+            AlertDialog alertDialog=builder.create();
+            alertDialog.show();
             return null;
         }
 
@@ -95,5 +123,11 @@ public class TokenKeeper {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.commit();
+    }
+
+    public static  boolean isLogining(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AIRPORT_TOKEN, Context.MODE_PRIVATE);
+        boolean hasToken=sharedPreferences.getBoolean(HASTOKEN,false);
+        return  hasToken;
     }
 }

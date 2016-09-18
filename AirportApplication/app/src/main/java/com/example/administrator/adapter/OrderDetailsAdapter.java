@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -44,6 +45,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
     public interface OnClicked{
         void checked(View view, int position);
         void clicked(View view,int position);
+        void detail(View view,int position);
     }
 
     public HashMap<Integer, Boolean> getMaps() {
@@ -88,12 +90,25 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
                     onClicked.checked(detailHolder.checkBox,position);
                 }
             });
-            detailHolder.addRemark.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    onClicked.clicked(detailHolder.addRemark,position);
-                }
-            });
+            //如果有更详细的目录，添加跳转页面，没有，则添加备注
+            if(dataBean.isIsDetail()){
+                detailHolder.forMore.setVisibility(View.VISIBLE);
+                detailHolder.addRemark.setVisibility(View.GONE);
+                detailHolder.forMore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onClicked.detail(detailHolder.forMore,position);
+                    }
+                });
+
+            }else{
+                detailHolder.addRemark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onClicked.clicked(detailHolder.addRemark,position);
+                    }
+                });
+            }
         }
     }
 
@@ -102,6 +117,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
         CheckBox checkBox; //是否完成
         TextView remarkContent;//添加备注  备注内容
         LinearLayout addRemark;
+        ImageView forMore;
         public DetailHolder(View itemView) {
             super(itemView);
             count = (TextView) itemView.findViewById(R.id.count);
@@ -109,6 +125,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
             checkBox = (CheckBox) itemView.findViewById(R.id.been_done);
             addRemark=(LinearLayout) itemView.findViewById(R.id.add_tips);
             remarkContent=(TextView)itemView.findViewById(R.id.remark_content);
+            forMore=(ImageView)itemView.findViewById(R.id.for_more_detail);
         }
     }
 

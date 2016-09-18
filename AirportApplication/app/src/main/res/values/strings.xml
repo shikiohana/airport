@@ -25,11 +25,11 @@
     <string name="done">已完成工单</string>
     <string name="not_done">未完成工单</string>
     <string name="notification">通知</string>
-    <string name="logout">退出</string>
+    <string name="logout">退出登录</string>
     <string name="my_center">个人中心</string>
     <!--照相dialog-->
     <string name="take_photo">拍照</string>
-    <string name="album">打开相册</string>
+    <string name="album">相册</string>
     <string name="cancle">取消</string>
     <!--相册-->
     <string name="more">更多</string>
@@ -38,9 +38,19 @@
     <string name="details">工单详情</string>
     <string name="tips">备注:</string>
     <string name="select_all">全选</string>
-    <string name="next_step">下一步</string>
+    <string name="next_step">完成</string>
     <!--添加备注-->
     <string name="add_remark">添加备注</string>
     <string name="finish">提交</string>
+    <string name="uploading">图片上传中</string>
+    <string name="start_time">开始日期:</string>
+    <string name="end_time">结束日期:</string>
+    <string name="plan_due">计划工期:</string>
+    <string name="actual_due">实际工期:</string>
+    <string name="code">工单编号:</string>
+
+    <string name="on_fail">上传失败</string>
+
+
 </resources>
 

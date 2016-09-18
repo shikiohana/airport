@@ -24,6 +24,15 @@
             android:textSize="16sp"
 
             android:id="@+id/content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:id="@+id/for_more_detail"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:textColor="@color/light_blue"
+            android:text="@string/more"/>
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
