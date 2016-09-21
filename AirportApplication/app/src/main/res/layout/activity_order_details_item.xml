@@ -20,19 +20,12 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:singleLine="true"
             android:gravity="center_vertical"
             android:textSize="16sp"
 
             android:id="@+id/content"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:id="@+id/for_more_detail"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:textColor="@color/light_blue"
-            android:text="@string/more"/>
+
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +37,7 @@
             android:id="@+id/been_done"/>
 
     </LinearLayout>
-    <LinearLayout
+  <!--  <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -64,9 +57,10 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textSize="16sp"
+            android:singleLine="true"
             android:layout_gravity="start|center_vertical"
             android:id="@+id/remark_content"/>
-    </LinearLayout>
+    </LinearLayout>-->
 
 
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -72,9 +73,9 @@ public class HomePageActivity extends FragmentActivity {
             @Override
             public void onPageSelected(int position) {
                 viewPager.setCurrentItem(position);
-                if(position==0){
+                if (position == 0) {
                     workOrder.setChecked(true);
-                }else if(position==1){
+                } else if (position == 1) {
                     mine.setChecked(true);
                 }
             }
@@ -105,4 +106,24 @@ public class HomePageActivity extends FragmentActivity {
         }
     };
 
+    /**
+     *
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            moveTaskToBack(false);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+        super.onBackPressed();
+
+    }
 }

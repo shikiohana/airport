@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -20,7 +22,6 @@
             android:textSize="18sp" />
 
 
-
         <ImageView
             android:id="@+id/back_not"
             android:layout_width="wrap_content"
@@ -36,17 +37,20 @@
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingTop="10dp">
+
         <TextView
-            android:text="@string/code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:text="@string/code"
             android:textSize="16sp" />
+
         <TextView
             android:id="@+id/order_code_not"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:singleLine="true"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -55,22 +59,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:gravity="center_vertical|start"
-                android:text="@string/start_time"/>
+                android:padding="10dp"
+                android:text="@string/start_time" />
+
             <TextView
                 android:id="@+id/start_time_not"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+
                 android:gravity="start|center_vertical"
                 android:padding="10dp" />
         </LinearLayout>
@@ -80,17 +88,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:gravity="center_vertical|start"
-                android:text="@string/end_time"/>
+                android:padding="10dp"
+                android:text="@string/plan_due" />
+
             <TextView
-                android:id="@+id/end_time_not"
+                android:id="@+id/plan_due_not"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:gravity="start|center_vertical"
                 android:padding="10dp" />
         </LinearLayout>
@@ -103,22 +114,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:gravity="center_vertical|start"
-                android:text="@string/plan_due"/>
+                android:padding="10dp"
+                android:text="@string/device_name" />
+
             <TextView
-                android:id="@+id/plan_due_not"
+                android:id="@+id/end_time_not"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+
                 android:gravity="start|center_vertical"
                 android:padding="10dp" />
         </LinearLayout>
@@ -128,19 +143,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
                 android:gravity="center_vertical|start"
-                android:text="@string/actual_due"/>
+                android:padding="10dp"
+                android:text="@string/actual_due" />
+
             <EditText
                 android:id="@+id/end_due_not"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="start|center_vertical"
-                android:background="@null"/>
+                android:inputType="number"
+                android:hint="@string/hint"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:gravity="start|center_vertical" />
         </LinearLayout>
 
 
@@ -151,13 +171,68 @@
         android:layout_height="0.5dp"
         android:background="@color/light_grey" />
 
-
-
-    <TextView
-        android:id="@+id/order_detail_content_not"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></TextView>
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/work_content"
+                    />
+                <TextView
+                    android:id="@+id/order_detail_content_not"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:gravity="start"
+                    android:padding="10dp"
+                    ></TextView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/work_description"
+                    />
+                <TextView
+                    android:id="@+id/edit_detail_not"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:gravity="start"
+                    android:padding="10dp"
+                    android:hint="@string/hint"
+                    android:background="@null"
+                    ></TextView>
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/save_not"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_blue"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/save"
+        android:textSize="18sp" />
+
 
 
     <TextView
@@ -167,7 +242,8 @@
         android:background="@color/light_blue"
         android:gravity="center"
         android:padding="10dp"
-        android:text="@string/next_step"
+        android:layout_marginTop="10dp"
+        android:text="@string/save_and_post"
         android:textSize="18sp" />
 
 </LinearLayout>

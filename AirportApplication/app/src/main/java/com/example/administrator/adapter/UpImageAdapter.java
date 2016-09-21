@@ -15,8 +15,8 @@ import org.xutils.x;
 import java.util.List;
 
 /**
+ * 上传图片展示
  * Created by quick_tech cpc on 2016/9/18.
- *
  */
 public class UpImageAdapter extends RecyclerView.Adapter {
     List<String> list;

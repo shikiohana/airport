@@ -15,6 +15,7 @@ import com.example.administrator.javabean.NotPlanOrder;
 import java.util.List;
 
 /**
+ * 非计划
  * Created by quick_tech cpc on 2016/9/12.
  */
 public class NotPlanWorkAdapter extends RecyclerView.Adapter{

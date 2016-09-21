@@ -27,17 +27,18 @@ import com.example.administrator.javabean.NotPlanOrder;
 import com.example.administrator.javabean.PlanOrder;
 import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.DividerItemDecoration;
+import com.example.administrator.utils.HttpUtils;
 import com.example.administrator.utils.TokenKeeper;
 import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import tourguide.tourguide.TourGuide;
 
 /**
  * 工单页面
@@ -50,18 +51,16 @@ public class WorkOderFragment extends Fragment {
     private NotPlanWorkAdapter notPlanAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RadioButton onPlan, notOnPlan;
-    private RadioGroup radioGroup;
+    private RadioGroup radioGroup, orderType;
     private CompanyAdapter companyAdapter;
     private View parent;
     private List<Company.DataBean> list;
     private ViewPager viewPager;
     private ArrayList<View> views;
-    private static final String COMPANYS = "api/SYSCustomer";
-    private static final String PLANLIST = "api/BllWorkOrderMaster/";
-    private static final String NOTONPLAN = "api/BllUnPlanOrderMaster/";
+    private List<PlanOrder.DataBean> select;
     public static final String DATABEAN = "databean";
+    private  RadioButton allSelect;
 
-    private TourGuide mTourGuideHandler;
     private List<PlanOrder.DataBean> planList;
     private List<NotPlanOrder.DataBean> notPlanList;
     private Company.DataBean nowChosen;
@@ -85,11 +84,16 @@ public class WorkOderFragment extends Fragment {
         radioGroup = (RadioGroup) view.findViewById(R.id.radio_group);
         onPlan = (RadioButton) view.findViewById(R.id.on_plan);
         notOnPlan = (RadioButton) view.findViewById(R.id.not_on_plan);
+
+        allSelect=(RadioButton)view.findViewById(R.id.all);
         viewPager = (ViewPager) view.findViewById(R.id.list_container);
-        planList=new ArrayList<>();
-        notPlanList=new ArrayList<>();
+        planList = new ArrayList<>();
+        notPlanList = new ArrayList<>();
+        select = new ArrayList<>();
+        orderType = (RadioGroup) view.findViewById(R.id.order_type);
+        orderType.setOnCheckedChangeListener(typeChange);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -97,11 +101,11 @@ public class WorkOderFragment extends Fragment {
 
                     case R.id.on_plan:
                         viewPager.setCurrentItem(0);
-
+                        orderType.setVisibility(View.VISIBLE);
                         break;
                     case R.id.not_on_plan:
                         viewPager.setCurrentItem(1);
-
+                        orderType.setVisibility(View.GONE);
                         break;
                     default:
                         break;
@@ -111,32 +115,80 @@ public class WorkOderFragment extends Fragment {
         onPlan.setChecked(true);
         companyList.setOnItemSelectedListener(onItemSelectedListener);
 
-      /*  mTourGuideHandler= TourGuide.init(getActivity()).with(TourGuide.Technique.Click)
-                .setPointer(new Pointer())
-                .setToolTip(new ToolTip().setTitle("点击切换航空公司"))
-                .setOverlay(new Overlay())
-                .playOn(companyList);*/
+    }
 
+
+    RadioGroup.OnCheckedChangeListener typeChange = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            switch (i) {
+                case R.id.all:
+                        inniSelect(null);
+                    break;
+                case R.id.day:
+                    inniSelect("日检");
+                    break;
+                case R.id.week:
+                    inniSelect("周检");
+                    break;
+                case R.id.season:
+                    inniSelect("季度检");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    /**
+     * @param type
+     */
+    private void inniSelect(String type) {
+        select=new ArrayList<>();
+        if(type!=null&&planList.size()>0){
+            for(PlanOrder.DataBean dataBean:planList){
+                if(dataBean.getITypeName().equals(type)){
+                    select.add(dataBean);
+                }
+                planAdapter=new PlanWorkOrderAdapter(getContext(),select);
+                planAdapter.setOnWorkItemClickListener(planItemClickListener);
+                planRecyclerView.setAdapter(planAdapter);
+            }
+        }else{
+            planAdapter=new PlanWorkOrderAdapter(getContext(),planList);
+            planAdapter.setOnWorkItemClickListener(planItemClickListener);
+            planRecyclerView.setAdapter(planAdapter);
+        }
     }
 
     /**
      * 更新 plan
      */
     private void updatePlant() {
-        swipeRefreshLayout.setRefreshing(true);
-        RequestParams plan = new RequestParams(Constants.BASE_URL + PLANLIST + nowChosen.getCustomerCode());
 
-        plan.addHeader("login",TokenKeeper.getUser(getContext()));
-        plan.addHeader("token",TokenKeeper.getToken(getContext()));
-        x.http().get(plan, new Callback.CommonCallback<String>() {
+        RequestParams plan = new RequestParams(Constants.BASE_URL + Constants.PLANLIST);
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("CustomerCode", nowChosen.getCustomerCode());
+            //  jsonObject.put("Login",TokenKeeper.getUser(getContext()));
+            jsonObject.put("Login", "xlf");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        plan.setAsJsonContent(true);
+        plan.setBodyContent(jsonObject.toString());
+        Log.i("plan", jsonObject.toString());
+        plan.addHeader("login", TokenKeeper.getUser(getContext()));
+        plan.addHeader("token", TokenKeeper.getToken(getContext()));
+        x.http().post(plan, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.i("plan",result);
+                Log.i("plan", result);
                 if (result != null && !result.equals("")) {
                     Gson gson = new Gson();
                     PlanOrder planOrder = gson.fromJson(result, PlanOrder.class);
                     planList = planOrder.getData();
-                    if(planList!=null){
+                    if (planList != null) {
                         planAdapter = new PlanWorkOrderAdapter(getContext(), planList);
                         planAdapter.setOnWorkItemClickListener(planItemClickListener);
                         planRecyclerView.setAdapter(planAdapter);
@@ -159,6 +211,7 @@ public class WorkOderFragment extends Fragment {
             @Override
             public void onFinished() {
                 swipeRefreshLayout.setRefreshing(false);
+                allSelect.setChecked(true);
             }
         });
 
@@ -168,20 +221,31 @@ public class WorkOderFragment extends Fragment {
     /**
      * 更新非plan
      */
-    private void updateNotPlan(){
-        swipeRefreshLayout.setRefreshing(true);
-        RequestParams notPlan = new RequestParams(Constants.BASE_URL + NOTONPLAN + nowChosen.getCustomerCode());
+    private void updateNotPlan() {
+
+        RequestParams notPlan = new RequestParams(Constants.BASE_URL + Constants.NOTONPLAN);
         notPlan.addHeader("login", TokenKeeper.getUser(getContext()));
-        notPlan.addHeader("token",TokenKeeper.getToken(getContext()));
-        x.http().get(notPlan, new Callback.CommonCallback<String>() {
+        notPlan.addHeader("token", TokenKeeper.getToken(getContext()));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("CustomerCode", nowChosen.getCustomerCode());
+            //   jsonObject.put("Login",TokenKeeper.getUser(getContext()));
+            jsonObject.put("Login", "xlf");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        notPlan.setAsJsonContent(true);
+        notPlan.setBodyContent(jsonObject.toString());
+        Log.i("notPlan", jsonObject.toString());
+        x.http().post(notPlan, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.i("notPlan",result);
+                Log.i("notPlan", result);
                 if (result != null && !result.equals("")) {
                     Gson gson = new Gson();
                     NotPlanOrder notPlanOrder = gson.fromJson(result, NotPlanOrder.class);
                     notPlanList = notPlanOrder.getData();
-                    if(notPlanList!=null){
+                    if (notPlanList != null) {
                         notPlanAdapter = new NotPlanWorkAdapter(getContext(), notPlanList);
                         notPlanAdapter.setOnWorkItemClickListener(notPlanItemClickListener);
                         notPlanRecyclerView.setAdapter(notPlanAdapter);
@@ -217,7 +281,10 @@ public class WorkOderFragment extends Fragment {
         planRecyclerView = (RecyclerView) plan.findViewById(R.id.work_list);
         planRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         planRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
+
+
         View notPlan = LayoutInflater.from(getContext()).inflate(R.layout.work_order_list, null);
+
         notPlanRecyclerView = (RecyclerView) notPlan.findViewById(R.id.work_list);
         notPlanRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         notPlanRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
@@ -249,6 +316,7 @@ public class WorkOderFragment extends Fragment {
 
     }
 
+
     /**
      * 航空公司item选择后的点击时间
      */
@@ -257,9 +325,20 @@ public class WorkOderFragment extends Fragment {
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
             //根据选择的航空公司更新recyclerview
 
-            nowChosen=list.get(i);
-            updatePlant();
-            updateNotPlan();
+            nowChosen = list.get(i);
+            if (TokenKeeper.isOverDue(getContext())) {
+                HttpUtils.refreshLogin(getContext(), new HttpUtils.RefreshListener() {
+                    @Override
+                    public void complete() {
+                        updatePlant();
+                        updateNotPlan();
+                    }
+                });
+            } else {
+                updatePlant();
+                updateNotPlan();
+            }
+
 
         }
 
@@ -290,7 +369,7 @@ public class WorkOderFragment extends Fragment {
         public void itemCLicked(View view, int position) {
             NotPlanOrder.DataBean dataBean = (NotPlanOrder.DataBean) view.getTag();
             Intent intent = new Intent(getActivity(), NotPlanDetailActivity.class);
-            intent.putExtra(DATABEAN, dataBean);
+            intent.putExtra(DATABEAN, dataBean.getBillCode());
 
             startActivity(intent);
         }
@@ -301,26 +380,27 @@ public class WorkOderFragment extends Fragment {
      */
     private void inniCompanyList() {
 
-        RequestParams requestParams = new RequestParams(Constants.BASE_URL + COMPANYS);
-        requestParams.addHeader("login",TokenKeeper.getUser(getContext()));
-        requestParams.addHeader("token",TokenKeeper.getToken(getContext()));
+        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.COMPANYS);
+        requestParams.addHeader("login", TokenKeeper.getUser(getContext()));
+        requestParams.addHeader("token", TokenKeeper.getToken(getContext()));
         Log.i("account", TokenKeeper.getUser(getContext()) + "");
         Log.i("token", TokenKeeper.getToken(getContext()) + "");
-        Log.i("url",Constants.BASE_URL + COMPANYS);
+        Log.i("url", Constants.BASE_URL + Constants.COMPANYS);
         x.http().get(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.i("s", result + "");
                 if (result != null && !result.equals("")) {
 
-                 Gson gson=new Gson();
-                 Company company=gson.fromJson(result,Company.class);
-                    list=company.getData();
+                    Gson gson = new Gson();
+                    Company company = gson.fromJson(result, Company.class);
+                    list = company.getData();
 
                     companyAdapter = new CompanyAdapter(getContext(), list);
                     companyList.setAdapter(companyAdapter);
                     //更新第一个公司对应的工单
-                    nowChosen=list.get(0);
+                    nowChosen = list.get(0);
+                    swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
                     updateNotPlan();
                     updatePlant();
                 }
@@ -328,7 +408,7 @@ public class WorkOderFragment extends Fragment {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Log.e("onError",ex.getMessage()+ex.getCause());
+                Log.e("onError", ex.getMessage() + ex.getCause());
             }
 
             @Override
@@ -347,8 +427,20 @@ public class WorkOderFragment extends Fragment {
     SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-            updateNotPlan();
-            updatePlant();
+            swipeRefreshLayout.setRefreshing(true);
+            if (TokenKeeper.isOverDue(getContext()) && TokenKeeper.isLogining(getContext())) {
+                HttpUtils.refreshLogin(getContext(), new HttpUtils.RefreshListener() {
+                    @Override
+                    public void complete() {
+                        //更新登陆状态后再刷新
+                        updateNotPlan();
+                        updatePlant();
+                    }
+                });
+            } else {
+                updateNotPlan();
+                updatePlant();
+            }
         }
     };
 }

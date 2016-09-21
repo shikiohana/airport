@@ -8,38 +8,39 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.administrator.airportapplication.R;
-import com.example.administrator.javabean.Company;
+import com.example.administrator.javabean.AccountSet;
 
 import java.util.List;
 
 /**
- * 航空公司
- * Created by quick_tech cpc on 2016/9/7.
+ * Created by quick_tech cpc on 2016/9/20.
  */
-public class CompanyAdapter extends BaseAdapter {
-    private List<Company.DataBean> list;
+public class AccountAdapter extends BaseAdapter {
+    private List<AccountSet.DataBean> list;
     private Context context;
     private LayoutInflater inflater;
-    public CompanyAdapter(Context context,List<Company.DataBean> list){
-        this.list=list;
-        this.context=context;
-        inflater=LayoutInflater.from(context);
+
+    public AccountAdapter(Context context, List<AccountSet.DataBean> list) {
+        this.list = list;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
     }
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         TitleHolder titleHolder;
-        if(view==null){
-            view=inflater.inflate(R.layout.company_item,null);
-            titleHolder=new TitleHolder();
-            titleHolder.textView=(TextView)view.findViewById(R.id.company_name);
+        if (view == null) {
+            view = inflater.inflate(R.layout.account_item, null);
+            titleHolder = new TitleHolder();
+            titleHolder.textView = (TextView) view.findViewById(R.id.account_name);
             view.setTag(titleHolder);
         }
-        titleHolder=(TitleHolder)view.getTag();
-        titleHolder.textView.setText(list.get(i).getCustomerName());
+        titleHolder = (TitleHolder) view.getTag();
+        titleHolder.textView.setText(list.get(i).getAccountName());
         return view;
     }
 
-    class TitleHolder{
+    class TitleHolder {
         TextView textView;
     }
 
@@ -55,6 +56,8 @@ public class CompanyAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return list.size()>0?list.size():0;
+        return list.size() > 0 ? list.size() : 0;
     }
+
+
 }

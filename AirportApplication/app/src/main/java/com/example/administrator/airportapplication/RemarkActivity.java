@@ -54,7 +54,7 @@ public class RemarkActivity extends Activity {
     private UpImageAdapter imageAdapter;
     private AlertDialog alertDialog;
     public static final int REQUEST_CODE = 12006;
-    private static final String UPLOAD = "api/UploadImage";
+
     private ProgressDialog progressDialog;
     private ArrayList<String> results, error;
 
@@ -88,8 +88,8 @@ public class RemarkActivity extends Activity {
         album.setOnClickListener(onClickListener);
         Intent intent = getIntent();
         if (intent != null) {
-            position = intent.getIntExtra(OrderDetailsActivity.POSITION, 0);
-            content = intent.getStringExtra(OrderDetailsActivity.CONTENT);
+            position = intent.getIntExtra(Constants.POSITION, 0);
+            content = intent.getStringExtra(Constants.CONTENT);
             if (content != null) {
                 remarkContent.setText(content);
             }
@@ -97,7 +97,7 @@ public class RemarkActivity extends Activity {
         inniRecycler(list);
         tvResult = new StringBuilder();
     }
-
+    private long exitTime;
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -108,8 +108,13 @@ public class RemarkActivity extends Activity {
                     break;
                 case R.id.done_remark:
                     //提交
-                    upLoadImg(list);
-                    //doneRemark();
+
+                    if(list.size()>0) {
+                        upLoadImg(list);
+                    }else{
+                        doneRemark();
+                    }
+
                     break;
                 case R.id.open_album:
                     //打开相册
@@ -126,13 +131,13 @@ public class RemarkActivity extends Activity {
      */
     private void doneRemark() {
         String content = remarkContent.getText().toString();
-        if (content != null) {
+        if (content != null&&results!=null) {
             Intent intent = new Intent();
-            intent.putExtra(OrderDetailsActivity.CONTENT, content);
-            intent.putExtra(OrderDetailsActivity.POSITION, position);
-            intent.putStringArrayListExtra(OrderDetailsActivity.IMGS,results);
+            intent.putExtra(Constants.CONTENT, content);
+            intent.putExtra(Constants.POSITION, position);
+            intent.putStringArrayListExtra(Constants.IMGS,results);
             setResult(OrderDetailsActivity.REQUEST, intent);
-
+            Log.i("done","done");
         }
         finish();
     }
@@ -193,9 +198,10 @@ public class RemarkActivity extends Activity {
             List<String> pathList = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT);
             for (String path : pathList) {
                 tvResult.append(path + "\n");
-                Log.i("result", tvResult.toString());
+
             }
             list = pathList;
+
             inniRecycler(list);
             imageAdapter.notifyDataSetChanged();
         }
@@ -267,15 +273,17 @@ public class RemarkActivity extends Activity {
      * 上传图片
      */
     private void upLoadImg(final List<String> stringList) {
-
+        final int size = stringList.size();
+        Log.e("size",size+"");
         if (stringList != null && stringList.size() > 0) {
             int i;
             progressDialog.show();
+
             for (i = 0; i < stringList.size(); i++) {
                 final int time = i;
-                final int size = stringList.size();
 
-                RequestParams requestParams = new RequestParams(Constants.BASE_URL + UPLOAD);
+
+                RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.UPLOAD);
                 String path = stringList.get(i);
                 //设置上传图片文件和权限的header
                 requestParams.addParameter("upLoadFile", new File(path));
@@ -288,8 +296,13 @@ public class RemarkActivity extends Activity {
 
                         Gson gson = new Gson();
                         UpResult upResult = gson.fromJson(result, UpResult.class);
+                        Log.i("upResult",upResult.getData()+"");
                         if (!upResult.isSuccess()) {
-                            error.add(list.get(time));
+                            error.add(upResult.getData());
+                        }
+                        if(upResult.getData()!=null) {
+
+                            results.add(upResult.getData());
                         }
                     }
 
@@ -306,18 +319,22 @@ public class RemarkActivity extends Activity {
                     @Override
                     public void onFinished() {
                         //上传完毕后隐藏提示
+                        Log.e("time",time+"");
+                        Log.e("size",size+"");
                         if (time == size - 1) {
 
 
-                            if (progressDialog.isShowing()) {
-                                progressDialog.dismiss();
-                            }
 
+                                //所有图片上传完毕后
+                                if (progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+
+                            }
                             imageAdapter = new UpImageAdapter(error, true);
                             recyclerView.setAdapter(imageAdapter);
                             if (error.size() == 0) {
                                 Toast.makeText(RemarkActivity.this, "图片上传完毕", Toast.LENGTH_SHORT).show();
-                                doneRemark();
+                              doneRemark();
                             } else {
                                 list=error;//上传列表更新为上传失败的图片列表
                                 Toast.makeText(RemarkActivity.this, "图片上传异常", Toast.LENGTH_SHORT).show();
@@ -331,4 +348,5 @@ public class RemarkActivity extends Activity {
 
 
     }
+
 }

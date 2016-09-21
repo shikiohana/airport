@@ -11,11 +11,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.administrator.adapter.AccountAdapter;
+import com.example.administrator.javabean.AccountSet;
 import com.example.administrator.javabean.LoginResult;
 import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.HttpUtils;
@@ -25,24 +29,33 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 登陆页面
  * Created by quick_tech cpc on 2016/9/5.
  */
 public class LoginActivity extends Activity {
-    private EditText userName, serverName, password, accountSet;//用户名，服务器，密码，账套
+    private EditText userName, password;//用户名，服务器，密码，账套
     private LinearLayout linearLayout;
-    private TextView login;
+    private TextView login, serverName;
     private HttpUtils httpUtils;
+    private Spinner accountSets;
     public static final String LOGINAPI = "api/LoginUser";
-    ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
+    private ArrayList<String> strings;
+    private List<AccountSet.DataBean> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         inni();
+        inniAccount();
         hasLogin();
 
     }
@@ -53,7 +66,7 @@ public class LoginActivity extends Activity {
     private void hasLogin() {
         if (TokenKeeper.isLogining(this)) {
             userName.setText(TokenKeeper.getUser(this));
-            password.setText(TokenKeeper.getUser(this));
+            password.setText(TokenKeeper.getPWD(this));
             login();
         }
     }
@@ -62,8 +75,8 @@ public class LoginActivity extends Activity {
      * 初始化控件
      */
     private void inni() {
-        serverName = (EditText) findViewById(R.id.edit_server);
-        accountSet = (EditText) findViewById(R.id.edit_account_set);
+        serverName = (TextView) findViewById(R.id.edit_server);
+        accountSets = (Spinner) findViewById(R.id.edit_account_set);
         userName = (EditText) findViewById(R.id.edit_username);
         password = (EditText) findViewById(R.id.edit_password);
         linearLayout = (LinearLayout) findViewById(R.id.linerlayout);
@@ -77,13 +90,48 @@ public class LoginActivity extends Activity {
         setUnCLickable();
     }
 
+    /**
+     * 初始化账套
+     */
+    private void inniAccount() {
+        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.GETACCOUNT);
+
+        x.http().get(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                AccountSet accountSet = gson.fromJson(result, AccountSet.class);
+                list = accountSet.getData();
+                AccountAdapter accountAdapter = new AccountAdapter(LoginActivity.this, list);
+                accountSets.setAdapter(accountAdapter);
+                if (list.size() > 0) {
+                    accountSets.setOnItemSelectedListener(onItemSelectedListener);
+                }
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+        });
+    }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.login:
                     //登陆
-
                     login();
                     break;
                 case R.id.linerlayout:
@@ -125,6 +173,8 @@ public class LoginActivity extends Activity {
                         if (token != null && !token.equals("")) {
                             Log.i("keeper", token + "");
                             TokenKeeper.saveToken(loginResult, LoginActivity.this);
+                            //刷新登陆时间
+                            TokenKeeper.saveLoginTime(LoginActivity.this);
                             startActivity(new Intent(LoginActivity.this, HomePageActivity.class));
                             finish();
                         } else {
@@ -167,7 +217,22 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
     }
+    AdapterView.OnItemSelectedListener onItemSelectedListener=new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String name=list.get(i).getServiceURL();
+            if(name!=null){
+                serverName.setText(name);
+            }else{
+                serverName.setText("");
+            }
+        }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    };
     /**
      * 监控输入框内容变化，有输入框为空时登陆不能点击
      */
@@ -198,9 +263,7 @@ public class LoginActivity extends Activity {
      * 设置登陆按钮不可点击
      */
     private void setUnCLickable() {
-
         login.setClickable(false);
-        //  login.setTextColor(getResources().getColor(R.color.light_grey));
         login.setBackground(getResources().getDrawable(R.drawable.solid_corner_unclick));
     }
 
@@ -209,7 +272,6 @@ public class LoginActivity extends Activity {
      */
     private void setClickable() {
         login.setClickable(true);
-        //  login.setTextColor(getResources().getColor(R.color.colorWhite));
         login.setBackground(getResources().getDrawable(R.drawable.solid_corner));
     }
 
@@ -233,7 +295,6 @@ public class LoginActivity extends Activity {
      */
     private boolean notEmpty(EditText editText) {
         String str = editText.getText().toString();
-
         return (str == null || str.equals("")) ? false : true;
     }
 

@@ -1,11 +1,15 @@
 package com.example.administrator.javabean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by quick_tech cpc on 2016/9/13.
  */
-public class OrderDetails {
+public class OrderDetails implements Parcelable {
 
     /**
      * BillCode : 201609091024-1
@@ -72,7 +76,7 @@ public class OrderDetails {
         this.Success = Success;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Parcelable {
         private String BillCode;
         private String CustomerCode;
         private int OrderStatus;
@@ -248,7 +252,7 @@ public class OrderDetails {
             this.Detail = Detail;
         }
 
-        public static class DetailBean {
+        public static class DetailBean implements Parcelable {
             private String Detail_AId;
             private String DeviceCategory_AId;
             private String CategoryName;
@@ -330,6 +334,150 @@ public class OrderDetails {
             public void setMemoEN(String MemoEN) {
                 this.MemoEN = MemoEN;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeString(this.Detail_AId);
+                dest.writeString(this.DeviceCategory_AId);
+                dest.writeString(this.CategoryName);
+                dest.writeByte(this.DeviceCategory_isOK ? (byte) 1 : (byte) 0);
+                dest.writeString(this.ContentS);
+                dest.writeString(this.ContentSEN);
+                dest.writeByte(this.isDetail ? (byte) 1 : (byte) 0);
+                dest.writeString(this.Memo);
+                dest.writeString(this.MemoEN);
+            }
+
+            public DetailBean() {
+            }
+
+            protected DetailBean(Parcel in) {
+                this.Detail_AId = in.readString();
+                this.DeviceCategory_AId = in.readString();
+                this.CategoryName = in.readString();
+                this.DeviceCategory_isOK = in.readByte() != 0;
+                this.ContentS = in.readString();
+                this.ContentSEN = in.readString();
+                this.isDetail = in.readByte() != 0;
+                this.Memo = in.readString();
+                this.MemoEN = in.readString();
+            }
+
+            public static final Creator<DetailBean> CREATOR = new Creator<DetailBean>() {
+                @Override
+                public DetailBean createFromParcel(Parcel source) {
+                    return new DetailBean(source);
+                }
+
+                @Override
+                public DetailBean[] newArray(int size) {
+                    return new DetailBean[size];
+                }
+            };
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.BillCode);
+            dest.writeString(this.CustomerCode);
+            dest.writeInt(this.OrderStatus);
+            dest.writeString(this.OrderState);
+            dest.writeString(this.BillDate);
+            dest.writeString(this.BillDateS);
+            dest.writeString(this.InspectType_AId);
+            dest.writeString(this.ITypeName);
+            dest.writeString(this.OrderFinishDate);
+            dest.writeString(this.CreateMan);
+            dest.writeString(this.OrderMemo);
+            dest.writeString(this.OrderMemoEN);
+            dest.writeString(this.VerifyMan);
+            dest.writeDouble(this.SchedulWork);
+            dest.writeString(this.ActualWork);
+            dest.writeString(this.ActualWorkS);
+            dest.writeString(this.Tel);
+            dest.writeList(this.Detail);
+        }
+
+        public DataBean() {
+        }
+
+        protected DataBean(Parcel in) {
+            this.BillCode = in.readString();
+            this.CustomerCode = in.readString();
+            this.OrderStatus = in.readInt();
+            this.OrderState = in.readString();
+            this.BillDate = in.readString();
+            this.BillDateS = in.readString();
+            this.InspectType_AId = in.readString();
+            this.ITypeName = in.readString();
+            this.OrderFinishDate = in.readString();
+            this.CreateMan = in.readString();
+            this.OrderMemo = in.readString();
+            this.OrderMemoEN = in.readString();
+            this.VerifyMan = in.readString();
+            this.SchedulWork = in.readDouble();
+            this.ActualWork = in.readString();
+            this.ActualWorkS = in.readString();
+            this.Tel = in.readString();
+            this.Detail = new ArrayList<DetailBean>();
+            in.readList(this.Detail, DetailBean.class.getClassLoader());
+        }
+
+        public static final Creator<DataBean> CREATOR = new Creator<DataBean>() {
+            @Override
+            public DataBean createFromParcel(Parcel source) {
+                return new DataBean(source);
+            }
+
+            @Override
+            public DataBean[] newArray(int size) {
+                return new DataBean[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.Data, flags);
+        dest.writeInt(this.ErrorCode);
+        dest.writeString(this.ErrorMessage);
+        dest.writeByte(this.Success ? (byte) 1 : (byte) 0);
+    }
+
+    public OrderDetails() {
+    }
+
+    protected OrderDetails(Parcel in) {
+        this.Data = in.readParcelable(DataBean.class.getClassLoader());
+        this.ErrorCode = in.readInt();
+        this.ErrorMessage = in.readString();
+        this.Success = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<OrderDetails> CREATOR = new Parcelable.Creator<OrderDetails>() {
+        @Override
+        public OrderDetails createFromParcel(Parcel source) {
+            return new OrderDetails(source);
+        }
+
+        @Override
+        public OrderDetails[] newArray(int size) {
+            return new OrderDetails[size];
+        }
+    };
 }

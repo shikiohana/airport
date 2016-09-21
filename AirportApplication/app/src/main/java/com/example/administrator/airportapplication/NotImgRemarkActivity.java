@@ -11,10 +11,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.administrator.utils.Constants;
+
 /**
  * Created by quick_tech cpc on 2016/9/18.
  */
-public class ActivityNotImgRemark extends Activity {
+public class NotImgRemarkActivity extends Activity {
     private ImageView back;
     private EditText remarkContent;
     private TextView done;
@@ -37,8 +39,8 @@ public class ActivityNotImgRemark extends Activity {
         remarkContent = (EditText) findViewById(R.id.edit_remark_no_img);
         Intent intent = getIntent();
         if (intent != null) {
-            position = intent.getIntExtra(OrderDetailsActivity.POSITION, 0);
-            content = intent.getStringExtra(OrderDetailsActivity.CONTENT);
+            position = intent.getIntExtra(Constants.POSITION, 0);
+            content = intent.getStringExtra(Constants.CONTENT);
             if (content != null) {
                 remarkContent.setText(content);
             }
@@ -71,8 +73,8 @@ public class ActivityNotImgRemark extends Activity {
         String content = remarkContent.getText().toString();
         if (content != null) {
             Intent intent = new Intent();
-            intent.putExtra(OrderDetailsActivity.CONTENT, content);
-            intent.putExtra(OrderDetailsActivity.POSITION, position);
+            intent.putExtra(Constants.CONTENT, content);
+            intent.putExtra(Constants.POSITION, position);
             setResult(OrderDetailsActivity.REQUEST, intent);
 
         }

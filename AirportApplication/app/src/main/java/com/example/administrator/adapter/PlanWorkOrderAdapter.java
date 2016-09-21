@@ -15,6 +15,7 @@ import com.example.administrator.javabean.PlanOrder;
 import java.util.List;
 
 /**
+ * 计划工单adapter
  * Created by quick_tech cpc on 2016/9/5.
  */
 public class PlanWorkOrderAdapter extends RecyclerView.Adapter {

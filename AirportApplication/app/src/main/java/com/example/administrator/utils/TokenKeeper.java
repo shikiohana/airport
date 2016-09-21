@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.administrator.javabean.LoginResult;
 
+import java.util.Date;
+
 /**
  * Created by quick_tech cpc on 2016/9/12.
  * 保存token，用户登录数据
@@ -26,6 +28,7 @@ public class TokenKeeper {
     public static final String HASTOKEN = "token_not_null";//是否存在token;
     public static final String AIRPORT_TOKEN = "air_port_quick";
     public static final String PASS="login_pass";
+    public static final String LOGINTIME="login_time";
 
     /**
      * 保存token
@@ -70,7 +73,7 @@ public class TokenKeeper {
     }
 
     /**
-     * 获取token
+     * 获取账号
      *
      * @param context
      * @return 无返回null, 存在返回token的String对象
@@ -80,6 +83,27 @@ public class TokenKeeper {
         boolean hasToken = sharedPreferences.getBoolean(HASTOKEN, false);
         if (hasToken) {
             String account = sharedPreferences.getString(ACCOUNT, "");
+            return account;
+        } else {
+            AlertDialog.Builder builder=new AlertDialog.Builder(context);
+            builder.setTitle("身份认证已过期，请重新登陆");
+            AlertDialog alertDialog=builder.create();
+            alertDialog.show();
+            return null;
+        }
+
+    }
+
+    /**
+     *
+     * @param context
+     * @return
+     */
+    public static String getName(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AIRPORT_TOKEN, Context.MODE_PRIVATE);
+        boolean hasToken = sharedPreferences.getBoolean(HASTOKEN, false);
+        if (hasToken) {
+            String account = sharedPreferences.getString(USERNAME, "");
             return account;
         } else {
             AlertDialog.Builder builder=new AlertDialog.Builder(context);
@@ -125,9 +149,40 @@ public class TokenKeeper {
         editor.commit();
     }
 
+    /**
+     * 是否已经登陆
+     * @param context
+     * @return 登陆返回true ，否则false
+     */
     public static  boolean isLogining(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(AIRPORT_TOKEN, Context.MODE_PRIVATE);
-        boolean hasToken=sharedPreferences.getBoolean(HASTOKEN,false);
+        boolean hasToken=sharedPreferences.getBoolean(HASTOKEN, false);
         return  hasToken;
+    }
+
+    /**
+     * 存入登陆时间
+     * @param context
+     */
+    public static void saveLoginTime(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(AIRPORT_TOKEN, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        Date date=new Date();
+        editor.putLong(LOGINTIME,date.getTime());
+        editor.commit();
+
+    }
+
+    /**
+     * token是否过期
+     * @param context
+     * @return  过期返回true，没过期返回false
+     */
+    public static boolean isOverDue(Context context){
+        SharedPreferences sharedPreferences=context.getSharedPreferences(AIRPORT_TOKEN,Context.MODE_PRIVATE);
+        long loginTime=sharedPreferences.getLong(LOGINTIME, 0);
+        Date date=new Date();
+        //7200000为2小时
+        return  (date.getTime()-loginTime)>7000000?true:false;
     }
 }

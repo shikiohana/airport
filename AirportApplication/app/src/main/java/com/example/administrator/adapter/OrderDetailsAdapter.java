@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +29,10 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
 
         inniRemarks();
     }
+
+    /**
+     * 初始化备注
+     */
     private void inniRemarks(){
         if(list.size()>0){
             for(int i=0;i<list.size();i++){
@@ -38,14 +41,21 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
         }
     }
 
-
+    /**
+     *设置点击事件
+     * @param onClicked
+     */
      public void setOnClicked(OnClicked onClicked){
          this.onClicked=onClicked;
      }
+
+    /**
+     * 点击事件接口
+     */
     public interface OnClicked{
         void checked(View view, int position);
-        void clicked(View view,int position);
-        void detail(View view,int position);
+      /*  void clicked(View view,int position);
+        void detail(View view,int position);*/
     }
 
     public HashMap<Integer, Boolean> getMaps() {
@@ -82,7 +92,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
         detailHolder.count.setText(position + 1 + "");
         detailHolder.content.setText(dataBean.getContentS());
         detailHolder.itemView.setTag(dataBean);
-        detailHolder.remarkContent.setText(getRemarks().get(position));
+       // detailHolder.remarkContent.setText(getRemarks().get(position));
         if(onClicked!=null){
             detailHolder.checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,7 +101,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
                 }
             });
             //如果有更详细的目录，添加跳转页面，没有，则添加备注
-            if(dataBean.isIsDetail()){
+          /*  if(dataBean.isIsDetail()){
                 detailHolder.forMore.setVisibility(View.VISIBLE);
                 detailHolder.addRemark.setVisibility(View.GONE);
                 detailHolder.forMore.setOnClickListener(new View.OnClickListener() {
@@ -102,33 +112,39 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
                 });
 
             }else{
+                detailHolder.addRemark.setVisibility(View.VISIBLE);
+                detailHolder.forMore.setVisibility(View.GONE);
                 detailHolder.addRemark.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         onClicked.clicked(detailHolder.addRemark,position);
                     }
                 });
-            }
+            }*/
         }
     }
 
     class DetailHolder extends RecyclerView.ViewHolder {
         TextView count, content;
         CheckBox checkBox; //是否完成
-        TextView remarkContent;//添加备注  备注内容
+       /* TextView remarkContent;//添加备注  备注内容
         LinearLayout addRemark;
-        ImageView forMore;
+        TextView forMore;*/
         public DetailHolder(View itemView) {
             super(itemView);
             count = (TextView) itemView.findViewById(R.id.count);
             content = (TextView) itemView.findViewById(R.id.content);
             checkBox = (CheckBox) itemView.findViewById(R.id.been_done);
-            addRemark=(LinearLayout) itemView.findViewById(R.id.add_tips);
+         /*   addRemark=(LinearLayout) itemView.findViewById(R.id.add_tips);
             remarkContent=(TextView)itemView.findViewById(R.id.remark_content);
-            forMore=(ImageView)itemView.findViewById(R.id.for_more_detail);
+            forMore=(TextView)itemView.findViewById(R.id.for_more_detail);*/
         }
     }
 
+    /**
+     * 设置全选和不选
+     * @param checked
+     */
     public void setAllChecked(boolean checked){
         if(list.size()>0){
             for(int i=0;i<list.size();i++){

@@ -11,46 +11,76 @@
         android:text="@string/my_center"
         android:gravity="center"
         android:textSize="18sp"
+
         android:textColor="@color/colorWhite"
         android:background="@color/light_blue"/>
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
-
-    android:gravity="center"
+    android:drawableRight="@drawable/forward"
+    android:textSize="16sp"
+    android:gravity="start|center_vertical"
     android:id="@+id/done_list"
     android:text="@string/done"
     />
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/light_grey"/>
+    <TextView
+        android:textSize="16sp"
+        android:gravity="start|center_vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:gravity="center"
+        android:drawableRight="@drawable/forward"
         android:id="@+id/not_done_list"
         android:text="@string/not_done"
         />
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/light_grey"/>
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:gravity="center"
+        android:drawableRight="@drawable/forward"
+        android:id="@+id/fault_list"
+        android:text="@string/fault_list"
+        android:textSize="16sp"
+        android:gravity="start|center_vertical"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/light_grey"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:drawableRight="@drawable/forward"
         android:id="@+id/notification_list"
         android:text="@string/notification"
+        android:textSize="16sp"
+        android:gravity="start|center_vertical"
         />
 
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_height="0.5dp"
+        android:background="@color/light_grey"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:gravity="center"
         android:textSize="18sp"
+        android:textColor="@color/colorWhite"
         android:id="@+id/logout"
+        android:background="@color/light_blue"
         android:text="@string/logout"
         />
 </LinearLayout>
