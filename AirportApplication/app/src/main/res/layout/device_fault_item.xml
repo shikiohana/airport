@@ -51,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fault_apply"
+            android:id="@+id/apply_state"
             android:padding="10dp"/>
         <TextView
             android:layout_width="0dp"
@@ -84,6 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fault_key"
+            android:id="@+id/apply_key"
             android:padding="10dp"/>
         <TextView
             android:layout_width="0dp"
@@ -100,6 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fault_content"
+            android:id="@+id/apply_detail"
             android:padding="10dp"/>
         <TextView
             android:layout_width="0dp"

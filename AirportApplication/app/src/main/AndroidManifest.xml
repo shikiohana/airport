@@ -12,11 +12,11 @@
 
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- iBeancon功能所需权限 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+   <!-- <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
     <!-- 个推3.0电子围栏功能所需权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <!--  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
     <!-- 个推SDK权限配置开始 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -31,19 +31,19 @@
 
 
     <!-- iBeancon功能与个推3.0电子围栏功能所需要的权限为非必需的可选择权限，可以选择性配置，以便使用个推3.0电子围栏功能 -->;
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+   <!-- <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
     <!-- 个推3.0电子围栏功能所需权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+   <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
     <!-- 浮动通知权限 -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+  <!--  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
     <!-- 自定义权限 -->
-    <uses-permission android:name="getui.permission.GetuiService.com.example.administrator.airportapplication" />
-    <!--替换为第三方应用的包名-->
-    <permission
-        android:name="getui.permission.GetuiService.com.example.administrator.airportapplication"
-        android:protectionLevel="normal"></permission>
+   <!-- <uses-permission android:name="getui.permission.GetuiService.com.example.administrator.airportapplication" />
+   --> <!--替换为第三方应用的包名-->
+    <!-- <permission
+         android:name="getui.permission.GetuiService.com.example.administrator.airportapplication"
+         android:protectionLevel="normal"></permission>-->
     <!--替换为第三方应用的包名-->
     <!-- 个推SDK权限配置结束 -->
     <application
@@ -92,6 +92,8 @@
             android:name=".DeviceFaultActivity"
             android:launchMode="singleTop"></activity>
         <activity android:name=".NotApplyActivity"
+            android:launchMode="singleTop"></activity>
+        <activity android:name=".ApplyListActivity"
             android:launchMode="singleTop"></activity>
      <!--   &lt;!&ndash; 个推SDK配置开始 &ndash;&gt;
         &lt;!&ndash; 配置的第三方参数属性 &ndash;&gt;

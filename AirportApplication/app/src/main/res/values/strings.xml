@@ -22,7 +22,7 @@
     <string name="order_num">工单编号:</string>
     <string name="order_content">工单内容:</string>
     <!--个人中心-->
-    <string name="done">用户信息</string>
+    <string name="done">我的申请</string>
     <string name="not_done">未提交工单</string>
     <string name="notification">通知</string>
     <string name="fault_list">故障清单</string>
@@ -86,6 +86,7 @@
     <string name="fault_time">录入时间:</string>
     <string name="fault_schedule">计划工期:</string>
     <string name="rewrite">申报</string>
+    <string name="my_apply">我的申请</string>
 
 
 </resources>

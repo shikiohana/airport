@@ -54,7 +54,7 @@ public class MineFragment extends Fragment {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.done_list:
-
+                    startActivity(new Intent(getContext(), ApplyListActivity.class));
                     break;
                 case R.id.not_done_list:
                     startActivity(new Intent(getContext(), NotApplyActivity.class));

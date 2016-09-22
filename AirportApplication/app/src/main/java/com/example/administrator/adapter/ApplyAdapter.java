@@ -43,16 +43,20 @@ public class ApplyAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         dataBean = list.get(position);
+
         final FaultHolder faultHolder = (FaultHolder) holder;
         faultHolder.code.setText(dataBean.getBillCode());
         faultHolder.itemView.setTag(dataBean);
+        faultHolder.applyKey.setText("申请状态:");
+        faultHolder.applyDetail.setText("内容详情:");
+        faultHolder.applyKey.setText("申请内容:");
         if (dataBean.getStatus() == 1) {
-            faultHolder.apply.setText("已申报");
+            faultHolder.apply.setText("已处理");
+            faultHolder.rewrite.setText("取消申请");
         } else {
-            faultHolder.apply.setText("未申报");
+            faultHolder.apply.setText("未处理");
             faultHolder.rewrite.setTextColor(Color.parseColor("#67ccff"));
-            faultHolder.schedule.setEnabled(true);
-            faultHolder.code.setEnabled(true);
+            faultHolder.rewrite.setText("取消申请");
             if (applyClick != null) {
                 faultHolder.rewrite.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -62,6 +66,7 @@ public class ApplyAdapter extends RecyclerView.Adapter {
                 });
             }
         }
+        //设备详情，故障描述，故障详情，计划工期
         faultHolder.device.setText(dataBean.getDeviceName() + "(编号" + dataBean.getDeviceCode() + ",规格" + dataBean.getDeviceSPEC() + ")");
         faultHolder.faultKey.setText(dataBean.getFaultKey());
         faultHolder.faultContent.setText(dataBean.getApplyDescription());
@@ -78,7 +83,7 @@ public class ApplyAdapter extends RecyclerView.Adapter {
     class FaultHolder extends RecyclerView.ViewHolder {
         TextView rewrite, device, apply, faultKey, faultContent;
         EditText schedule, code;
-
+        TextView applyState,applyKey,applyDetail;
         public FaultHolder(View itemView) {
             super(itemView);
             rewrite = (TextView) itemView.findViewById(R.id.rewrite);
@@ -88,6 +93,9 @@ public class ApplyAdapter extends RecyclerView.Adapter {
             apply = (TextView) itemView.findViewById(R.id.fault_apply);
             faultKey = (TextView) itemView.findViewById(R.id.fault_key);
             faultContent = (TextView) itemView.findViewById(R.id.fault_content);
+            applyState=(TextView)itemView.findViewById(R.id.apply_state);
+            applyDetail=(TextView)itemView.findViewById(R.id.apply_detail);
+            applyKey=(TextView)itemView.findViewById(R.id.apply_key);
         }
     }
 }
