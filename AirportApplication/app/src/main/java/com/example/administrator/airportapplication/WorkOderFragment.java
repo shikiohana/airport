@@ -171,7 +171,7 @@ public class WorkOderFragment extends Fragment {
         try {
             jsonObject.put("CustomerCode", nowChosen.getCustomerCode());
             //  jsonObject.put("Login",TokenKeeper.getUser(getContext()));
-            jsonObject.put("Login", "xlf");
+            jsonObject.put("Login", TokenKeeper.getUser(getContext()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -230,7 +230,7 @@ public class WorkOderFragment extends Fragment {
         try {
             jsonObject.put("CustomerCode", nowChosen.getCustomerCode());
             //   jsonObject.put("Login",TokenKeeper.getUser(getContext()));
-            jsonObject.put("Login", "xlf");
+            jsonObject.put("Login", TokenKeeper.getUser(getContext()));
         } catch (JSONException e) {
             e.printStackTrace();
         }

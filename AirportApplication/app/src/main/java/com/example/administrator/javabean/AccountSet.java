@@ -7,10 +7,11 @@ import java.util.List;
  */
 public class AccountSet {
 
+
     /**
-     * Data : [{"AccountCode":"sample string 1","AccountName":"sample string 2","ServiceURL":"sample string 3"},{"AccountCode":"sample string 1","AccountName":"sample string 2","ServiceURL":"sample string 3"},{"AccountCode":"sample string 1","AccountName":"sample string 2","ServiceURL":"sample string 3"}]
-     * ErrorCode : 1
-     * ErrorMessage : sample string 2
+     * Data : [{"AccountCode":"KMJC-003568","AccountName":"昆明机场","ServiceURL":"192.168.1.240"},{"AccountCode":"SGJC-0036688","AccountName":"陕甘机场","ServiceURL":"localhost:15326"}]
+     * ErrorCode : 0
+     * ErrorMessage :
      * Success : true
      */
 
@@ -18,9 +19,9 @@ public class AccountSet {
     private String ErrorMessage;
     private boolean Success;
     /**
-     * AccountCode : sample string 1
-     * AccountName : sample string 2
-     * ServiceURL : sample string 3
+     * AccountCode : KMJC-003568
+     * AccountName : 昆明机场
+     * ServiceURL : 192.168.1.240
      */
 
     private List<DataBean> Data;

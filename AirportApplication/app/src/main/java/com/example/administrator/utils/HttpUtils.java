@@ -3,7 +3,6 @@ package com.example.administrator.utils;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.administrator.airportapplication.LoginActivity;
 import com.example.administrator.javabean.LoginResult;
 import com.google.gson.Gson;
 
@@ -44,7 +43,7 @@ public class HttpUtils {
             jsonObject.put("Login", TokenKeeper.getUser(context));
             jsonObject.put("PWD",TokenKeeper.getPWD(context));
             String json=jsonObject.toString();
-            RequestParams requestParams=new RequestParams(Constants.BASE_URL+ LoginActivity.LOGINAPI);
+            RequestParams requestParams=new RequestParams(Constants.BASE_URL+ Constants.LOGIN);
             requestParams.setAsJsonContent(true);
             requestParams.setBodyContent(json);
             x.http().post(requestParams, new Callback.CommonCallback<String>() {

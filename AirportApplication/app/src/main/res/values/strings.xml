@@ -29,6 +29,7 @@
     <string name="my_fault_list">我的故障</string>
     <string name="logout">退出登录</string>
     <string name="my_center">个人中心</string>
+    <string name="clear">清空</string>
     <!--照相dialog-->
     <string name="take_photo">拍照</string>
     <string name="album">相册</string>
@@ -75,14 +76,17 @@
     <string name="all">全部</string>
     <string name="day">日检</string>
     <string name="week">周检</string>
-    <string name="season">季度检</string>
+    <string name="season">季检</string>
     <!--错误详情-->
     <string name="my_fault">故障列表</string>
     <string name="fault_device">设备信息:</string>
     <string name="fault_key">故障描述:</string>
-    <string name="fault_content">故障描述:</string>
-    <string name="fault_apply">提交状态:</string>
+    <string name="fault_content">故障详情:</string>
+    <string name="fault_apply">申报状态:</string>
     <string name="fault_time">录入时间:</string>
     <string name="fault_schedule">计划工期:</string>
+    <string name="rewrite">申报</string>
+
+
 </resources>
 

@@ -102,7 +102,7 @@ public class MoreDetailActivity extends Activity {
                     Gson gson = new Gson();
                     Device device = gson.fromJson(result, Device.class);
                     list = device.getData();
-                    Log.i("list",list.size()+"");
+                    Log.i("list", list.size() + "");
 
                     deviceDetailAdapter = new DeviceDetailAdapter(list);
                     deviceDetailAdapter.setDeviceClicked(deviceClicked);
@@ -131,14 +131,21 @@ public class MoreDetailActivity extends Activity {
         @Override
         public void clicked(View view, int i) {
             Intent intent = new Intent(MoreDetailActivity.this, RemarkActivity.class);
-            String content = list.get(i).getFault().getFault_Description();
-            if (content == null) {
-                content = "";
+            String content = "";
+            if (list.get(i).getFault() != null) {
+                content = list.get(i).getFault().getFault_Description();
+                if (content == null) {
+                    content = "";
+                }
+
+                intent.putExtra(Constants.CONTENT, content);
+                intent.putExtra(Constants.POSITION, i);
+                startActivityForResult(intent, OrderDetailsActivity.REQUEST);
+            } else {
+                Toast.makeText(MoreDetailActivity.this, "没有更多内容", Toast.LENGTH_SHORT).show();
             }
 
-            intent.putExtra(Constants.CONTENT, content);
-            intent.putExtra(Constants.POSITION, i);
-            startActivityForResult(intent, OrderDetailsActivity.REQUEST);
+
         }
 
         @Override
@@ -179,7 +186,7 @@ public class MoreDetailActivity extends Activity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("data", requestCode + "--------"+resultCode);
+        Log.i("data", requestCode + "--------" + resultCode);
         if (requestCode == resultCode) {
             switch (requestCode) {
                 case OrderDetailsActivity.REQUEST:
@@ -187,21 +194,24 @@ public class MoreDetailActivity extends Activity {
                     String content = data.getStringExtra(Constants.CONTENT);
                     Device.DataBean dataBean = list.get(position);
                     List<String> imgs = data.getStringArrayListExtra(Constants.IMGS);
-                    Device.DataBean.FaultBean faultBean=dataBean.getFault();
+                    Device.DataBean.FaultBean faultBean = dataBean.getFault();
+
                     if (imgs != null && content != null) {
-                        if (imgs.size() > 0&&faultBean!=null) {
+                        if (faultBean != null) {
                             Log.i("data", dataBean.getFault() + "");
                             Log.i("data", dataBean.getFault().getAId() + "");
-                            List<Device.DataBean.FaultBean.ImageBean> list=new ArrayList<>();
-
-                            for(String url:imgs){
-                                Device.DataBean.FaultBean.ImageBean imageBean=new Device.DataBean.FaultBean.ImageBean();
-                                imageBean.setIMGUrl(url);
-                                Log.i("url",url);
-                                list.add(imageBean);
+                            List<Device.DataBean.FaultBean.ImageBean> list = new ArrayList<>();
+                            if (imgs.size() > 0) {
+                                for (String url : imgs) {
+                                    Device.DataBean.FaultBean.ImageBean imageBean = new Device.DataBean.FaultBean.ImageBean();
+                                    imageBean.setIMGUrl(url);
+                                    Log.i("url", url);
+                                    list.add(imageBean);
+                                }
                             }
                             faultBean.setImage(list);
                             faultBean.setFault_Description(content);
+                            Log.i("ccccc", content);
                         } else if (content.equals("") && imgs.size() == 0) {
                             Log.i("data", dataBean.getFault() + "");
                             dataBean.setFault(null);
@@ -253,7 +263,7 @@ public class MoreDetailActivity extends Activity {
             builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                        alertDialog.dismiss();
+                    alertDialog.dismiss();
                 }
             });
             alertDialog = builder.create();
@@ -279,13 +289,14 @@ public class MoreDetailActivity extends Activity {
 
     /**
      * 返回键监听
+     *
      * @param keyCode
      * @param event
      * @return
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK&&event.getAction()==KeyEvent.ACTION_DOWN){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             back();
             return true;
         }

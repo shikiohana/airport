@@ -93,21 +93,21 @@
             android:launchMode="singleTop"></activity>
         <activity android:name=".NotApplyActivity"
             android:launchMode="singleTop"></activity>
-        <!-- 个推SDK配置开始 -->
-        <!-- 配置的第三方参数属性 -->
+     <!--   &lt;!&ndash; 个推SDK配置开始 &ndash;&gt;
+        &lt;!&ndash; 配置的第三方参数属性 &ndash;&gt;
         <meta-data
             android:name="PUSH_APPID"
             android:value="U3OjjwuD5N9haN42NU6rW6" />
-        <!-- 替换为第三方应用的APPID -->
+        &lt;!&ndash; 替换为第三方应用的APPID &ndash;&gt;
         <meta-data
             android:name="PUSH_APPKEY"
             android:value="WCjh4YA7Pj8uU9ooKVFrY7" />
-        <!-- 替换为第三方应用的APPKEY -->
+        &lt;!&ndash; 替换为第三方应用的APPKEY &ndash;&gt;
         <meta-data
             android:name="PUSH_APPSECRET"
             android:value="vesPPb9S7d9bCFKYgZPAl7" />
-        <!-- 替换为第三方应用的APPSECRET -->
-        <!-- 配置SDK核心服务 -->
+        &lt;!&ndash; 替换为第三方应用的APPSECRET &ndash;&gt;
+        &lt;!&ndash; 配置SDK核心服务 &ndash;&gt;
         <service
             android:name="com.igexin.sdk.PushService"
             android:exported="true"
@@ -133,7 +133,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="com.igexin.sdk.action.refreshls" />
-                <!-- 以下三项为可选的action声明，可大大提高service存活率和消息到达速度 -->
+                &lt;!&ndash; 以下三项为可选的action声明，可大大提高service存活率和消息到达速度 &ndash;&gt;
                 <action android:name="android.intent.action.MEDIA_MOUNTED" />
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
@@ -170,14 +170,14 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <!-- 把"你的包名"替换为第三方应用的包名 -->
+        &lt;!&ndash; 把"你的包名"替换为第三方应用的包名 &ndash;&gt;
         <provider
 
             android:name="com.igexin.download.DownloadProvider"
 
             android:authorities="downloads.com.example.administrator.airportapplication"
             android:exported="true"
-            android:process=":pushservice" />
+            android:process=":pushservice" />-->
         <!-- 个推SDK配置结束 -->
 
         <!-- 配置第三方Receiver -->

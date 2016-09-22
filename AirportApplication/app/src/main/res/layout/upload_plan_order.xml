@@ -190,6 +190,12 @@
                 android:gravity="start|center_vertical"
                 android:padding="10dp"
                 android:singleLine="true" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:id="@+id/add_rec_man"
+                android:src="@drawable/add_img"/>
         </LinearLayout>
 
 

@@ -1,8 +1,12 @@
 package com.example.administrator.utils;
 
+import android.util.Log;
+
 import com.example.administrator.javabean.OrderDb;
 
 import org.xutils.DbManager;
+import org.xutils.db.sqlite.SqlInfo;
+import org.xutils.db.table.DbModel;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
@@ -50,11 +54,29 @@ public class SaveOrderData {
         daoConfig=getDaoConfig();
         dbManager= x.getDb(daoConfig);
         try {
-            dbManager.save(orderDb);
+
+            DbModel model= dbManager.findDbModelFirst(new SqlInfo("select * from orders where code = "+orderDb.code));
+
+            if(model==null) {
+                dbManager.save(orderDb);
+                Log.i("save", "success");
+            }else{
+                Log.i("save","fail");
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }
     }
 
+
+    public static void clear(){
+        daoConfig=getDaoConfig();
+        dbManager= x.getDb(daoConfig);
+        try {
+            dbManager.delete(OrderDb.class);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

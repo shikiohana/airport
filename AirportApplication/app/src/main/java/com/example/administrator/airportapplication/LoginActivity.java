@@ -45,7 +45,7 @@ public class LoginActivity extends Activity {
     private TextView login, serverName;
     private HttpUtils httpUtils;
     private Spinner accountSets;
-    public static final String LOGINAPI = "api/LoginUser";
+
     private ProgressDialog progressDialog;
     private ArrayList<String> strings;
     private List<AccountSet.DataBean> list;
@@ -56,7 +56,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         inni();
         inniAccount();
-        hasLogin();
+
 
     }
 
@@ -67,7 +67,7 @@ public class LoginActivity extends Activity {
         if (TokenKeeper.isLogining(this)) {
             userName.setText(TokenKeeper.getUser(this));
             password.setText(TokenKeeper.getPWD(this));
-            login();
+            /*login();*/
         }
     }
 
@@ -99,6 +99,7 @@ public class LoginActivity extends Activity {
         x.http().get(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+                Log.i("dddd",result);
                 Gson gson = new Gson();
                 AccountSet accountSet = gson.fromJson(result, AccountSet.class);
                 list = accountSet.getData();
@@ -107,6 +108,7 @@ public class LoginActivity extends Activity {
                 if (list.size() > 0) {
                     accountSets.setOnItemSelectedListener(onItemSelectedListener);
                 }
+                hasLogin();
             }
 
             @Override
@@ -161,7 +163,7 @@ public class LoginActivity extends Activity {
             jsonObject.put("PWD", password.getText().toString());
             String json = jsonObject.toString();
             Log.i("json", json);
-            httpUtils.postJSON(Constants.BASE_URL + LOGINAPI, json, new Callback.CommonCallback<String>() {
+            httpUtils.postJSON(Constants.BASE_URL + Constants.LOGIN, json, new Callback.CommonCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     if (result != null && !result.equals("")) {

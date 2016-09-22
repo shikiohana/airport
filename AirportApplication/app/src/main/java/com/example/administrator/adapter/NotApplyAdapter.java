@@ -28,7 +28,8 @@ public class NotApplyAdapter extends RecyclerView.Adapter {
         this.applyClickListener=applyClickListener;
     }
     public interface ApplyClickListener{
-        void click(View view);
+        void click(View view,int position);
+        void longClick(View view,int position);
     }
 
     @Override
@@ -47,7 +48,14 @@ public class NotApplyAdapter extends RecyclerView.Adapter {
             applyHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    applyClickListener.click(applyHolder.itemView);
+                    applyClickListener.click(applyHolder.itemView,position);
+                }
+            });
+            applyHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    applyClickListener.longClick(applyHolder.itemView,position);
+                    return true;
                 }
             });
         }

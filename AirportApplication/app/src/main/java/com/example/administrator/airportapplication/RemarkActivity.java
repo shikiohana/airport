@@ -131,6 +131,7 @@ public class RemarkActivity extends Activity {
      */
     private void doneRemark() {
         String content = remarkContent.getText().toString();
+        Log.i("content",content);
         if (content != null&&results!=null) {
             Intent intent = new Intent();
             intent.putExtra(Constants.CONTENT, content);

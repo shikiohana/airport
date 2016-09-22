@@ -10,27 +10,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.airportapplication.R;
-import com.example.administrator.javabean.DeviceFault;
+import com.example.administrator.javabean.Applys;
 
 import java.util.List;
 
 /**
- * Created by quick_tech cpc on 2016/9/21.
+ * Created by quick_tech cpc on 2016/9/22.
  */
-public class DeviceFaultAdapter extends RecyclerView.Adapter {
-    List<DeviceFault.DataBean> list;
-    DeviceFault.DataBean dataBean;
-    DeviceApplyClick deviceApplyClick;
+public class ApplyAdapter extends RecyclerView.Adapter {
+    List<Applys.DataBean> list;
+    Applys.DataBean dataBean;
+    ApplyClick applyClick;
 
-    public void setDeviceApplyClick(DeviceApplyClick deviceApplyClick){
-        this.deviceApplyClick=deviceApplyClick;
-    }
-    public interface  DeviceApplyClick{
-        void deviceClick(View view,View code,View schedule,int position);
+    public void setApplyClick(ApplyClick applyClick) {
+        this.applyClick = applyClick;
     }
 
+    public interface ApplyClick {
+        void deviceClick(View view, View code, View schedule, int position);
+    }
 
-    public DeviceFaultAdapter(List<DeviceFault.DataBean> list) {
+
+    public ApplyAdapter(List<Applys.DataBean> list) {
         this.list = list;
     }
 
@@ -45,26 +46,26 @@ public class DeviceFaultAdapter extends RecyclerView.Adapter {
         final FaultHolder faultHolder = (FaultHolder) holder;
         faultHolder.code.setText(dataBean.getBillCode());
         faultHolder.itemView.setTag(dataBean);
-        if (dataBean.isIsApply()) {
+        if (dataBean.getStatus() == 1) {
             faultHolder.apply.setText("已申报");
         } else {
             faultHolder.apply.setText("未申报");
             faultHolder.rewrite.setTextColor(Color.parseColor("#67ccff"));
             faultHolder.schedule.setEnabled(true);
             faultHolder.code.setEnabled(true);
-            if(deviceApplyClick!=null){
+            if (applyClick != null) {
                 faultHolder.rewrite.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        deviceApplyClick.deviceClick(faultHolder.itemView,faultHolder.code,faultHolder.schedule,position);
+                        applyClick.deviceClick(faultHolder.itemView, faultHolder.code, faultHolder.schedule, position);
                     }
                 });
             }
         }
-        faultHolder.device.setText(dataBean.getDeviceName()+"(编号"+dataBean.getDeviceCode()+",规格"+dataBean.getDeviceSPEC()+")");
+        faultHolder.device.setText(dataBean.getDeviceName() + "(编号" + dataBean.getDeviceCode() + ",规格" + dataBean.getDeviceSPEC() + ")");
         faultHolder.faultKey.setText(dataBean.getFaultKey());
-        faultHolder.faultContent.setText(dataBean.getFault_Description());
-        faultHolder.schedule.setText(dataBean.getSchedulWork()+"");
+        faultHolder.faultContent.setText(dataBean.getApplyDescription());
+        faultHolder.schedule.setText(dataBean.getSchedulWork() + "");
     }
 
     @Override
@@ -75,11 +76,12 @@ public class DeviceFaultAdapter extends RecyclerView.Adapter {
     }
 
     class FaultHolder extends RecyclerView.ViewHolder {
-        TextView rewrite,  device, apply, faultKey, faultContent;
-        EditText schedule,code;
+        TextView rewrite, device, apply, faultKey, faultContent;
+        EditText schedule, code;
+
         public FaultHolder(View itemView) {
             super(itemView);
-            rewrite=(TextView)itemView.findViewById(R.id.rewrite);
+            rewrite = (TextView) itemView.findViewById(R.id.rewrite);
             code = (EditText) itemView.findViewById(R.id.fault_code);
             schedule = (EditText) itemView.findViewById(R.id.fault_schedule);
             device = (TextView) itemView.findViewById(R.id.fault_device);
