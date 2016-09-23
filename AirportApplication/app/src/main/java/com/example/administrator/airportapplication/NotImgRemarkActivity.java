@@ -75,7 +75,7 @@ public class NotImgRemarkActivity extends Activity {
             Intent intent = new Intent();
             intent.putExtra(Constants.CONTENT, content);
             intent.putExtra(Constants.POSITION, position);
-            setResult(OrderDetailsActivity.REQUEST, intent);
+            setResult(Constants.REQUEST, intent);
 
         }
         finish();

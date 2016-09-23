@@ -13,23 +13,24 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.adapter.SelectUserAdapter;
+import com.example.administrator.javabean.NotPlanNotification;
 import com.example.administrator.javabean.OrderDb;
 import com.example.administrator.javabean.OrderDetails;
+import com.example.administrator.javabean.PlanNotification;
 import com.example.administrator.javabean.Response;
+import com.example.administrator.javabean.Submit;
 import com.example.administrator.javabean.UnPlanOderDetail;
 import com.example.administrator.javabean.UserResult;
 import com.example.administrator.utils.Constants;
+import com.example.administrator.utils.HttpUtils;
 import com.example.administrator.utils.SaveOrderData;
 import com.example.administrator.utils.TokenKeeper;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
 import org.xutils.ex.DbException;
@@ -43,20 +44,22 @@ import java.util.List;
  * Created by quick_tech cpc on 2016/9/20.
  */
 public class UploadOrderActivity extends Activity {
-    TextView code, start, end, plan, actual, recMan, selectDone;
-    ImageView back, add;
-    TextView confirm;
-    String account, billCode;
-    boolean isPlan;
-    RecyclerView chosenMan, recManList;
-    String customerCode;
-    UserResult userResult;
-    private List<UserResult.DataBean> list, chosenList,selectList;
-    PopupWindow popupWindow;
-    EditText select;
-    SelectUserAdapter allAdapter, chosenAdapter;
-    AlertDialog alertDialog;
-    AlertDialog.Builder builder;
+    private TextView code, start, end, plan, actual, recMan, selectDone;
+    private ImageView back, add;
+    private TextView confirm;
+    private String billCode;
+    private boolean isPlan, isNotification;
+    private RecyclerView chosenMan, recManList;
+    private String customerCode;
+    private UserResult userResult;
+    private List<UserResult.DataBean> list, chosenList, selectList;
+    private List<String> users;
+    private EditText select;
+    private SelectUserAdapter allAdapter, chosenAdapter;
+    private AlertDialog alertDialog;
+    private AlertDialog.Builder builder;
+    private double num;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +85,8 @@ public class UploadOrderActivity extends Activity {
         confirm.setOnClickListener(onClickListener);
         list = new ArrayList<>();
         chosenList = new ArrayList<>();
-        selectList=new ArrayList<>();
+        selectList = new ArrayList<>();
+        users = new ArrayList<>();
     }
 
     View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -90,10 +94,24 @@ public class UploadOrderActivity extends Activity {
         public void onClick(View view) {
             switch (view.getId()) {
                 case R.id.order_back:
+                    setResult(0);
                     finish();
                     break;
                 case R.id.up_load_order:
-                    post();
+                    if (chosenList.size() == 0) {
+                        Toast.makeText(UploadOrderActivity.this, "还未选择检查人员", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (TokenKeeper.isOverDue(UploadOrderActivity.this)) {
+                            HttpUtils.refreshLogin(UploadOrderActivity.this, new HttpUtils.RefreshListener() {
+                                @Override
+                                public void complete() {
+                                    post();
+                                }
+                            });
+                        } else {
+                            post();
+                        }
+                    }
                     break;
                 case R.id.add_rec_man:
                     if (alertDialog != null) {
@@ -101,7 +119,7 @@ public class UploadOrderActivity extends Activity {
                         WindowManager.LayoutParams params = alertDialog.getWindow().getAttributes();
                         params.width = 800;
 
-                        params.height = 800 ;
+                        params.height = 800;
                         alertDialog.getWindow().setAttributes(params);
                     }
                     break;
@@ -113,13 +131,13 @@ public class UploadOrderActivity extends Activity {
     };
 
 
-    private void inniRec(String content){
-        StringBuilder stringBuilder=new StringBuilder();
-        if(list.size()==0&&content!=null){
+    private void inniRec(String content) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (list.size() == 0 && content != null) {
             stringBuilder.append(content);
-        }else{
-            for(int i=0;i<chosenList.size();i++){
-                stringBuilder.append(" "+chosenList.get(i).getEName()+"");
+        } else {
+            for (int i = 0; i < chosenList.size(); i++) {
+                stringBuilder.append(" " + chosenList.get(i).getEName() + "");
             }
         }
 
@@ -133,7 +151,8 @@ public class UploadOrderActivity extends Activity {
         Intent intent = getIntent();
 
         isPlan = intent.getBooleanExtra("plan", true);
-        if (isPlan) {
+        isNotification = intent.getBooleanExtra("notification", false);
+        if (isPlan && !isNotification) {//计划，非通知
             OrderDetails orderDetails = intent.getParcelableExtra("orderDetail");
             OrderDetails.DataBean dataBean = orderDetails.getData();
             billCode = dataBean.getBillCode();
@@ -141,16 +160,42 @@ public class UploadOrderActivity extends Activity {
             start.setText(dataBean.getBillDate());
             end.setText(dataBean.getOrderFinishDate());
             plan.setText(dataBean.getSchedulWork() + "（天）");
+            num = intent.getDoubleExtra("work_time", 0);
             actual.setText(dataBean.getActualWork());
             customerCode = dataBean.getCustomerCode();
 
-        } else {
+        }
+        if (!isPlan && !isNotification) {//非计划,非通知
             UnPlanOderDetail.DataBean dataBean = intent.getParcelableExtra("orderDetail");
-            double num = intent.getDoubleExtra("work_time", 0);
+            num = intent.getDoubleExtra("work_time", 0);
             billCode = dataBean.getBillCode();
             code.setText(billCode);
             start.setText(dataBean.getBillDate());
             end.setText(dataBean.getFinishDate());
+            plan.setText(dataBean.getSchedulWork() + "（天）");
+            actual.setText(num + "（天）");
+           /* recMan.setText(TokenKeeper.getName(this));*/
+            customerCode = dataBean.getCustomerCode();
+        }
+        if (isPlan && isNotification) {//通知，计划
+            PlanNotification.DataBean dataBean = intent.getParcelableExtra("orderDetail");
+            num = intent.getDoubleExtra("work_time", 0);
+            billCode = dataBean.getBillCode();
+            code.setText(billCode);
+            start.setText(dataBean.getBillDate());
+            end.setText(dataBean.getOrderFinishDate());
+            plan.setText(dataBean.getSchedulWork() + "（天）");
+            actual.setText(dataBean.getActualWork() + "（天）");
+           /* recMan.setText(TokenKeeper.getName(this));*/
+            customerCode = dataBean.getCustomerCode();
+        }
+        if (!isPlan && isNotification) {//非计划，通知
+            NotPlanNotification.DataBean dataBean = intent.getParcelableExtra("orderDetail");
+            num = intent.getDoubleExtra("work_time", 0);
+            billCode = dataBean.getBillCode();
+            code.setText(billCode);
+            start.setText(dataBean.getBillDate());
+            end.setText(dataBean.getFinishDateS());
             plan.setText(dataBean.getSchedulWork() + "（天）");
             actual.setText(num + "（天）");
            /* recMan.setText(TokenKeeper.getName(this));*/
@@ -167,15 +212,19 @@ public class UploadOrderActivity extends Activity {
         requestParams.setAsJsonContent(true);
         requestParams.addHeader("login", TokenKeeper.getUser(this));
         requestParams.addHeader("token", TokenKeeper.getToken(this));
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("BillCode", billCode);
-            jsonObject.put("Login", TokenKeeper.getUser(this));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        Gson gson = new Gson();
+        Submit submit = new Submit();
+
+        submit.setActualWork(num);
+        submit.setBillCode(billCode);
+        submit.setLogin(TokenKeeper.getUser(this));
+        for (UserResult.DataBean userResult : chosenList) {
+            users.add(userResult.getEName());
         }
-        requestParams.setBodyContent(jsonObject.toString());
-        Log.i("jsono", jsonObject.toString());
+        submit.setWorkers(users);
+        String json = gson.toJson(submit);
+        requestParams.setBodyContent(json);
+        Log.i("jsono", json);
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -183,17 +232,18 @@ public class UploadOrderActivity extends Activity {
                 Gson gson = new Gson();
                 Response response = gson.fromJson(result, Response.class);
                 if (response.isSuccess()) {
-                    DbManager dbManager=x.getDb(SaveOrderData.getDaoConfig());
+                    DbManager dbManager = x.getDb(SaveOrderData.getDaoConfig());
 
                     try {
                         dbManager.deleteById(OrderDb.class, billCode);
-                        Intent intent =new Intent();
-                        intent.putExtra("billcode",billCode);
+                        Intent intent = new Intent();
+                        intent.putExtra("billcode", billCode);
                         intent.setAction(NotApplyActivity.DELETE);
                         sendBroadcast(intent);
                     } catch (DbException e) {
                         e.printStackTrace();
                     }
+                    setResult(Constants.SUMBIT);
                     finish();
                 } else {
                     Toast.makeText(UploadOrderActivity.this, response.getErrorMessage(), Toast.LENGTH_SHORT).show();
@@ -233,7 +283,7 @@ public class UploadOrderActivity extends Activity {
                 list = userResult.getData();
                 if (list != null) {
                     add.setOnClickListener(onClickListener);
-                    selectList=list;
+                    selectList = list;
                     inniPop();
                 }
             }
@@ -259,8 +309,7 @@ public class UploadOrderActivity extends Activity {
      * 弹出筛选user
      */
     private void inniPop() {
-      //  popupWindow = new PopupWindow(this);
-        builder=new AlertDialog.Builder(this);
+        builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.select_user, null);
         selectDone = (TextView) view.findViewById(R.id.select_done);
         select = (EditText) view.findViewById(R.id.select_content);
@@ -281,38 +330,12 @@ public class UploadOrderActivity extends Activity {
                 if (alertDialog.isShowing()) {
                     alertDialog.dismiss();
                 }
-                String content=select.getText().toString();
+                String content = select.getText().toString();
                 inniRec(content);
             }
         });
         builder.setView(view);
-
-        alertDialog=builder.create();
-      /*  popupWindow.setContentView(view);
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metrics);
-
-        popupWindow.setWidth(metrics.widthPixels);
-        //设置高度为全屏高度的70%
-        popupWindow.setHeight((int) (metrics.heightPixels * 0.7));
-
-
-        popupWindow.setTouchable(true);
-        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //点击PopupWindow以外区域时PopupWindow消失
-                if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                    if(popupWindow.isShowing()) {
-                        popupWindow.dismiss();
-
-                    }
-                }
-                return true;
-            }
-        });*/
-
+        alertDialog = builder.create();
     }
 
     /**
@@ -335,12 +358,9 @@ public class UploadOrderActivity extends Activity {
     SelectUserAdapter.UserClickListener removeUserClickListener = new SelectUserAdapter.UserClickListener() {
         @Override
         public void click(View view, int position) {
-
-
             chosenList.remove(position);
             chosenAdapter.notifyItemRemoved(position);
             chosenAdapter.notifyItemRangeChanged(position, chosenList.size() - position);
-
         }
     };
 
@@ -348,7 +368,7 @@ public class UploadOrderActivity extends Activity {
     /**
      * 监听输入筛选
      */
-    TextWatcher textWatcher=new TextWatcher() {
+    TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -361,15 +381,15 @@ public class UploadOrderActivity extends Activity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            String content =select.getText().toString();
-            selectList=new ArrayList<>();
-            for(UserResult.DataBean dataBean:list){
-                if(dataBean.getEName().contains(content)||dataBean.getECode().contains(content)){
+            String content = select.getText().toString();
+            selectList = new ArrayList<>();
+            for (UserResult.DataBean dataBean : list) {
+                if (dataBean.getEName().contains(content) || dataBean.getECode().contains(content)) {
                     //根据名字和工号筛选
                     selectList.add(dataBean);
                 }
             }
-            allAdapter=new SelectUserAdapter(selectList);
+            allAdapter = new SelectUserAdapter(selectList);
             allAdapter.setUserClickListener(userClickListener);
             recManList.setAdapter(allAdapter);
 

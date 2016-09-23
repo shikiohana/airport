@@ -194,6 +194,7 @@ public class LoginActivity extends Activity {
 
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
                     }
                     setClickable();
                 }
@@ -202,6 +203,7 @@ public class LoginActivity extends Activity {
                 public void onCancelled(CancelledException cex) {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
                     }
                     setClickable();
                 }

@@ -9,9 +9,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.administrator.javabean.NotPlanNotification;
 import com.example.administrator.javabean.OrderDb;
 import com.example.administrator.javabean.Response;
-import com.example.administrator.javabean.UnPlanOderDetail;
 import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.SaveOrderData;
 import com.example.administrator.utils.TokenKeeper;
@@ -24,25 +24,22 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 /**
- * 非计划工单详情
- * Created by quick_tech cpc on 2016/9/18.
+ * Created by quick_tech cpc on 2016/9/23.
  */
-public class NotPlanDetailActivity extends Activity {
+public class NotPlanNotificationActivity extends Activity {
     private TextView orderCode, next, startTime, endTime, content, planDue,save,workResult;//工单编号，完成，开始时间，结束时间，具体内容
     private ImageView back;//返回键
-    private UnPlanOderDetail.DataBean  dataBean;
+    private NotPlanNotification.DataBean dataBean;
     private String code;
     private EditText actulDue;
     private boolean up = false;
-    private double number;
-
+    double number;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_not_plan_detail);
-        inni();
-        inniText();
     }
+
 
     /**
      * 初始化控件
@@ -76,8 +73,8 @@ public class NotPlanDetailActivity extends Activity {
 
 
 
-                orderCode.setText(code);//工单编号
-                getDetail(code);
+            orderCode.setText(code);//工单编号
+            getDetail(code);
 
         }
     }
@@ -88,16 +85,16 @@ public class NotPlanDetailActivity extends Activity {
      * @param code
      */
     private void getDetail(String code) {
-        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.NOTDETAIL + code);
+        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.NOTNOTIF + code);
         requestParams.addHeader("login", TokenKeeper.getUser(this));
         requestParams.addHeader("token", TokenKeeper.getToken(this));
-        Log.i(TokenKeeper.getUser(this),TokenKeeper.getToken(this));
+        Log.i(TokenKeeper.getUser(this), TokenKeeper.getToken(this));
         x.http().get(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Log.i("unplan", result);
                 Gson gson = new Gson();
-                UnPlanOderDetail unPlanOderDetail = gson.fromJson(result, UnPlanOderDetail.class);
+                NotPlanNotification unPlanOderDetail = gson.fromJson(result, NotPlanNotification.class);
                 if (unPlanOderDetail.isSuccess()) {
                     dataBean = unPlanOderDetail.getData();
 
@@ -145,7 +142,7 @@ public class NotPlanDetailActivity extends Activity {
 
                     break;
                 case R.id.edit_detail_not:
-                    Intent intent=new Intent(NotPlanDetailActivity.this,EditActivity.class);
+                    Intent intent=new Intent(NotPlanNotificationActivity.this,EditActivity.class);
                     String content=workResult.getText().toString();
                     if(content==null){
                         content="";
@@ -192,18 +189,19 @@ public class NotPlanDetailActivity extends Activity {
                 Gson gson = new Gson();
                 Response response = gson.fromJson(result, Response.class);
                 if (response.isSuccess()) {
-                    OrderDb orderDb=new OrderDb();
-                    orderDb.code=code;
-                    orderDb.content=workResult.getText().toString();
-                    orderDb.isPlan=false;
+                    OrderDb orderDb = new OrderDb();
+                    orderDb.code = code;
+                    orderDb.content = workResult.getText().toString();
+                    orderDb.isPlan = false;
                     SaveOrderData.saveOrder(orderDb);
                     if (up) {
                         //如果需要提交
-                        Intent intent = new Intent(NotPlanDetailActivity.this, UploadOrderActivity.class);
+                        Intent intent = new Intent(NotPlanNotificationActivity.this, UploadOrderActivity.class);
                         intent.putExtra("orderDetail", dataBean);
                         intent.putExtra("plan", false);
                         intent.putExtra("work_time", number);
-                        startActivityForResult(intent, Constants.SUMBIT);
+                        intent.putExtra("notification", true);
+                        startActivityForResult(intent,Constants.SUMBIT);
                     }
                 }
             }
@@ -227,15 +225,15 @@ public class NotPlanDetailActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("ddd",requestCode+"~~~~~~~"+resultCode);
+        Log.i("ddd", requestCode + "~~~~~~~" + resultCode);
         if(requestCode==resultCode){
-          if(resultCode==1000){
-              String content = data.getStringExtra("content");
-              Log.i("content",content);
-              workResult.setText(content);
-          }else if(resultCode==Constants.SUMBIT){
-              finish();
-          }
+            if(resultCode==1000){
+                String content = data.getStringExtra("content");
+                Log.i("content",content);
+                workResult.setText(content);
+            }else if(resultCode==Constants.SUMBIT){
+                finish();
+            }
 
         }
         super.onActivityResult(requestCode, resultCode, data);

@@ -23,4 +23,10 @@ public class Constants {
     public static final String DEVICEFAUTL="DeviceFaultRecord/";
     public static final String GETUSERS="BasicEmployee/";
     public static final String APPLY="ClientFaultApply/";
+    public static final String NOTIFICATION="UserMSG/";
+    public static final String PLANNOTIF="WorkOrder/";
+    public static final String NOTNOTIF="ReceiveCheckUnPlanOrder/";
+    public static final int REQUEST = 2698;
+    public static final int DETAIL = 3568;
+    public static final int SUMBIT =9652;
 }

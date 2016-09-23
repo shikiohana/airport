@@ -22,12 +22,13 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:padding="10dp"></Spinner>
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/arrow"
+            android:layout_alignBottom="@+id/company_list"
             android:layout_centerHorizontal="true"
-            android:layout_alignBottom="@+id/company_list"/>
+            android:src="@drawable/arrow" />
     </RelativeLayout>
 
     <android.support.design.widget.CoordinatorLayout
@@ -40,93 +41,99 @@
             android:layout_height="wrap_content"
 
             android:fitsSystemWindows="true">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_scrollFlags="scroll|enterAlways">
-            <RadioGroup
-                android:id="@+id/radio_group"
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:orientation="horizontal"
-                >
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_scrollFlags="scroll|enterAlways">
+
+                <RadioGroup
+                    android:id="@+id/radio_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:orientation="horizontal">
 
 
+                    <RadioButton
+                        android:id="@+id/on_plan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="14dp"
+                        android:text="@string/on_plan"
+                        android:textColor="@drawable/text_change"
+                        android:textSize="16sp" />
 
-                <RadioButton
-                    android:id="@+id/on_plan"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:padding="14dp"
-                    android:textSize="16sp"
-                    android:text="@string/on_plan"
-                    android:textColor="@drawable/text_change" />
+                    <RadioButton
+                        android:id="@+id/not_on_plan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="14dp"
+                        android:text="@string/not_on_plan"
+                        android:textColor="@drawable/text_change"
+                        android:textSize="16sp" />
+                </RadioGroup>
 
-                <RadioButton
-                    android:id="@+id/not_on_plan"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:padding="14dp"
-                    android:text="@string/not_on_plan"
-                    android:textSize="16sp"
-                    android:textColor="@drawable/text_change" />
-            </RadioGroup>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/text_grey" />
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorWhite"
-                android:orientation="horizontal"
-                android:id="@+id/order_type"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/text_grey" />
 
-                >
-                <RadioButton
-                    android:layout_width="0dp"
+                <RadioGroup
+                    android:id="@+id/order_type"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="10dp"
-                    android:textColor="@drawable/text_change"
-                    android:id="@+id/all"
-                    android:text="@string/all"/>
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="10dp"
-                    android:textColor="@drawable/text_change"
-                    android:id="@+id/day"
-                    android:text="@string/day"/>
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@drawable/text_change"
-                    android:id="@+id/week"
-                    android:padding="10dp"
-                    android:text="@string/week"/>
-                <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textColor="@drawable/text_change"
-                    android:id="@+id/season"
-                    android:padding="10dp"
-                    android:text="@string/season"/>
+                    android:background="@color/colorWhite"
+                    android:orientation="horizontal"
 
-            </RadioGroup>
-        </LinearLayout>
+                    >
+
+                    <RadioButton
+                        android:id="@+id/all"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/all"
+                        android:textColor="@drawable/text_change" />
+
+                    <RadioButton
+                        android:id="@+id/day"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/day"
+                        android:textColor="@drawable/text_change" />
+
+                    <RadioButton
+                        android:id="@+id/week"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/week"
+                        android:textColor="@drawable/text_change" />
+
+                    <RadioButton
+                        android:id="@+id/season"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/season"
+                        android:textColor="@drawable/text_change" />
+
+                </RadioGroup>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -142,22 +149,14 @@
 
             >
 
-           <android.support.v4.view.ViewPager
-               android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               android:id="@+id/list_container"
-               android:isScrollContainer="false"></android.support.v4.view.ViewPager>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/list_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:isScrollContainer="false"></android.support.v4.view.ViewPager>
         </android.support.v4.widget.SwipeRefreshLayout>
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
-            />
+
     </android.support.design.widget.CoordinatorLayout>
-
-
 
 
 </LinearLayout>

@@ -292,6 +292,18 @@ public class UpOrder {
             Detail.add(detailBean);
         }
     }
+    public  void setPlanDetails(List<PlanNotification.DataBean.DetailBean> list,HashMap<Integer,Boolean> checkList){
+        if(Detail==null){
+            Detail=new ArrayList<>();
+        }
+        for (int i=0;i<list.size();i++){
+            DetailBean detailBean=new DetailBean();
+            PlanNotification.DataBean.DetailBean ordDetail=list.get(i);
+            detailBean.setDetail_AId(ordDetail.getDetail_AId());
+            detailBean.setChecked(checkList.get(i));
+            Detail.add(detailBean);
+        }
+    }
 
     public void setDevices(ArrayList<com.example.administrator.javabean.Device.DataBean> list){
         if(Device==null){

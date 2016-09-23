@@ -140,7 +140,7 @@ public class MoreDetailActivity extends Activity {
 
                 intent.putExtra(Constants.CONTENT, content);
                 intent.putExtra(Constants.POSITION, i);
-                startActivityForResult(intent, OrderDetailsActivity.REQUEST);
+                startActivityForResult(intent, Constants.REQUEST);
             } else {
                 Toast.makeText(MoreDetailActivity.this, "没有更多内容", Toast.LENGTH_SHORT).show();
             }
@@ -189,7 +189,7 @@ public class MoreDetailActivity extends Activity {
         Log.i("data", requestCode + "--------" + resultCode);
         if (requestCode == resultCode) {
             switch (requestCode) {
-                case OrderDetailsActivity.REQUEST:
+                case Constants.REQUEST:
                     int position = data.getIntExtra(Constants.POSITION, 0);
                     String content = data.getStringExtra(Constants.CONTENT);
                     Device.DataBean dataBean = list.get(position);
@@ -279,7 +279,7 @@ public class MoreDetailActivity extends Activity {
 
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra(CHECKRESULT, beans);
-            setResult(OrderDetailsActivity.DETAIL, intent);
+            setResult(Constants.DETAIL, intent);
             Toast.makeText(MoreDetailActivity.this, "设备处理结果已保存", Toast.LENGTH_SHORT).show();
             finish();
         } else {

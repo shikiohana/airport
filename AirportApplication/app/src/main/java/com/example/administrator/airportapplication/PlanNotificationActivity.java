@@ -19,10 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.administrator.adapter.OrderDetailsAdapter;
+import com.example.administrator.adapter.PlanNotificationAdapter;
 import com.example.administrator.javabean.Device;
 import com.example.administrator.javabean.OrderDb;
-import com.example.administrator.javabean.OrderDetails;
+import com.example.administrator.javabean.PlanNotification;
 import com.example.administrator.javabean.UpOrder;
 import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.DividerItemDecoration;
@@ -41,10 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 工单详情
- * Created by quick_tech cpc on 2016/9/12.
+ * Created by quick_tech cpc on 2016/9/23.
  */
-public class OrderDetailsActivity extends Activity {
+public class PlanNotificationActivity extends Activity {
     private Intent intent;
 
     private String code = "";
@@ -53,16 +52,18 @@ public class OrderDetailsActivity extends Activity {
     private TextView orderCode, next, startTime, endTime, planDue, actualDue, upLoad;//工单编号，完成，开始时间，结束时间，计划工期，实际工期
     private ImageView back;
     private TextView deviceDetails;
-    private OrderDetails orderDetails;
-    private OrderDetailsAdapter orderDetailsAdapter;
+    private PlanNotification planNotification;
+    private PlanNotificationAdapter planNotificationAdapter;
     private AlertDialog alertDialog;
 
+    public static final int DETAIL = 3568;
     private boolean up = false;
     private boolean change = false;
-    private List<OrderDetails.DataBean.DetailBean> list;
+    private List<PlanNotification.DataBean.DetailBean> list;
     private ArrayList<Device.DataBean> devices;
+
     private double dueNum;
-    private String workDay="";//初始工期
+    private String workDay = "";//初始工期
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +87,8 @@ public class OrderDetailsActivity extends Activity {
                 }
             }
         } else {
-            Toast.makeText(OrderDetailsActivity.this, "获取数据失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PlanNotificationActivity.this, "获取数据失败", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     /**
@@ -112,7 +112,7 @@ public class OrderDetailsActivity extends Activity {
         next.setOnClickListener(onClickListener);
         upLoad.setOnClickListener(onClickListener);
         deviceDetails.setOnClickListener(onClickListener);
-        list=new ArrayList<>();
+        list = new ArrayList<>();
         devices = new ArrayList<>();
         actualDue.addTextChangedListener(new TextWatcher() {
             @Override
@@ -127,44 +127,15 @@ public class OrderDetailsActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String content=actualDue.getText().toString();
-                if(!content.equals(workDay)){
-                    workDay=content;
-                    change=true;
+                String content = actualDue.getText().toString();
+                if (!content.equals(workDay)) {
+                    workDay = content;
+                    change = true;
                 }
             }
         });
     }
 
-    /**
-     * 点击事件
-     */
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            switch (view.getId()) {
-                case R.id.back:
-                    back();
-                    break;
-                case R.id.next_step:
-                    doneList();
-                    break;
-                case R.id.device_details:
-                    Intent intent = new Intent(OrderDetailsActivity.this, MoreDetailActivity.class);
-                    intent.putExtra(Constants.DEVICE_AID, code);
-                    startActivityForResult(intent, Constants.DETAIL);
-                    break;
-                case R.id.load_order:
-
-                        up = true;
-                        doneList();
-
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     /**
      * 由工号获取工单详情，并更新list
@@ -180,22 +151,22 @@ public class OrderDetailsActivity extends Activity {
                 }
             });
         }
-        RequestParams requesParams = new RequestParams(Constants.BASE_URL + Constants.ORDERDETAILS + code);
+        RequestParams requesParams = new RequestParams(Constants.BASE_URL + Constants.PLANNOTIF + code);
         requesParams.addHeader("login", TokenKeeper.getUser(this));
         requesParams.addHeader("token", TokenKeeper.getToken(this));
         x.http().get(requesParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                orderDetails = gson.fromJson(result, OrderDetails.class);
-                list = orderDetails.getData().getDetail();
+                planNotification = gson.fromJson(result, PlanNotification.class);
+                list = planNotification.getData().getDetail();
 
-                startTime.setText(orderDetails.getData().getBillDate());
-                endTime.setText(orderDetails.getData().getOrderFinishDate());
-                planDue.setText(orderDetails.getData().getSchedulWork() + "天");
-                orderDetailsAdapter = new OrderDetailsAdapter(list);
-                orderDetailsAdapter.setOnClicked(onClicked);
-                recyclerView.setAdapter(orderDetailsAdapter);
+                startTime.setText(planNotification.getData().getBillDate());
+                endTime.setText(planNotification.getData().getOrderFinishDate());
+                planDue.setText(planNotification.getData().getSchedulWork() + "天");
+                planNotificationAdapter = new PlanNotificationAdapter(list);
+                planNotificationAdapter.setNotificationClick(notificationClick);
+                recyclerView.setAdapter(planNotificationAdapter);
 
                 selectAll.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -207,7 +178,7 @@ public class OrderDetailsActivity extends Activity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-                Toast.makeText(OrderDetailsActivity.this, "获取数据失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlanNotificationActivity.this, "获取数据失败", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -222,31 +193,50 @@ public class OrderDetailsActivity extends Activity {
         });
     }
 
-
-    /**
-     * listItem的点击事件
-     */
-    OrderDetailsAdapter.OnClicked onClicked = new OrderDetailsAdapter.OnClicked() {
-        /**
-         * 设置选中状态
-         * @param view
-         * @param position
-         */
+    PlanNotificationAdapter.NotificationClick notificationClick = new PlanNotificationAdapter.NotificationClick() {
         @Override
-        public void checked(View view, int position) {
+        public void notificationClicked(View view, int position) {
             change = true;
-            if (orderDetailsAdapter.getMaps().get(position)) {
-                orderDetailsAdapter.getMaps().put(position, false);
+            if (planNotificationAdapter.getMaps().get(position)) {
+                planNotificationAdapter.getMaps().put(position, false);
                 selectAll.setChecked(false);
                 selectAll.setText("全选");
             } else {
-                orderDetailsAdapter.getMaps().put(position, true);
-                selectAll.setChecked(orderDetailsAdapter.isAllChecked());
-                if (orderDetailsAdapter.isAllChecked()) {
+                planNotificationAdapter.getMaps().put(position, true);
+                selectAll.setChecked(planNotificationAdapter.isAllChecked());
+                if (planNotificationAdapter.isAllChecked()) {
                     selectAll.setText("取消");
                 }
             }
-            orderDetailsAdapter.notifyDataSetChanged();
+            planNotificationAdapter.notifyDataSetChanged();
+        }
+    };
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            switch (view.getId()) {
+                case R.id.back:
+                    back();
+                    break;
+                case R.id.next_step:
+                    doneList();
+                    break;
+                case R.id.device_details:
+                    Intent intent = new Intent(PlanNotificationActivity.this, MoreDetailActivity.class);
+                    intent.putExtra(Constants.DEVICE_AID, code);
+                    startActivityForResult(intent, DETAIL);
+                    break;
+                case R.id.load_order:
+
+                    up = true;
+                    doneList();
+
+                    break;
+                default:
+                    break;
+            }
+
         }
     };
 
@@ -254,9 +244,9 @@ public class OrderDetailsActivity extends Activity {
      * 全选和取消全选
      */
     private void setSelectAll() {
-        if (orderDetailsAdapter != null) {
-            orderDetailsAdapter.setAllChecked(selectAll.isChecked());
-            orderDetailsAdapter.notifyDataSetChanged();
+        if (planNotificationAdapter != null) {
+            planNotificationAdapter.setAllChecked(selectAll.isChecked());
+            planNotificationAdapter.notifyDataSetChanged();
         }
         if (selectAll.isChecked()) {
             selectAll.setText("取消");
@@ -275,10 +265,10 @@ public class OrderDetailsActivity extends Activity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("cdoooo",requestCode+"-------"+resultCode);
+        Log.i("cdoooo", requestCode + "-------" + resultCode);
         if (resultCode == resultCode) {
             switch (resultCode) {
-                case Constants.DETAIL:
+                case DETAIL:
                     ArrayList<Device.DataBean> list = data.getParcelableArrayListExtra(MoreDetailActivity.CHECKRESULT);
                     if (list != null && list.size() > 0) {
                         for (Device.DataBean dataBean : list) {
@@ -303,22 +293,22 @@ public class OrderDetailsActivity extends Activity {
      */
     private void doneList() {
 
-        if(list.size()>0) {
+        if (list.size() > 0) {
             Gson gson = new Gson();
             UpOrder upOrder = new UpOrder();
             upOrder.setBillCode(code);
-            upOrder.setDetails(list, orderDetailsAdapter.getMaps());
+            upOrder.setPlanDetails(list, planNotificationAdapter.getMaps());
             upOrder.setDevices(devices);
             upOrder.setOrderMemo("");
             upOrder.setOrderMemoEN("");
             String due = actualDue.getText().toString();
-            Log.i("due",due);
+            Log.i("due", due);
             if (due.equals("")) {
                 due = "0";
             }
             dueNum = Integer.parseInt(due);
             upOrder.setActualWork(dueNum);
-            orderDetails.getData().setActualWork(dueNum+"（天）");
+            planNotification.getData().setActualWork(dueNum);
             String json = gson.toJson(upOrder);
             Log.i("json", json);
             RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.DEVICE);
@@ -334,23 +324,24 @@ public class OrderDetailsActivity extends Activity {
                         JSONObject jsonObject = new JSONObject(result);
                         boolean success = jsonObject.getBoolean("Success");
                         if (success) {//上传成功
-                            Toast.makeText(OrderDetailsActivity.this, "保存完毕", Toast.LENGTH_SHORT).show();
-                            OrderDb orderDb=new OrderDb();
-                            orderDb.code=code;
-                            orderDb.isPlan=true;
-                            orderDb.content=orderDetails.getData().getOrderMemo();
+                            Toast.makeText(PlanNotificationActivity.this, "保存完毕", Toast.LENGTH_SHORT).show();
+                            OrderDb orderDb = new OrderDb();
+                            orderDb.code = code;
+                            orderDb.isPlan = true;
+                            orderDb.content = planNotification.getData().getOrderMemo();
                             SaveOrderData.saveOrder(orderDb);
                             change = false;
                             if (up) {//如果是上传
-                                Intent intent = new Intent(OrderDetailsActivity.this, UploadOrderActivity.class);
-                                intent.putExtra("orderDetail", orderDetails);
+                                Intent intent = new Intent(PlanNotificationActivity.this, UploadOrderActivity.class);
+                                intent.putExtra("orderDetail", planNotification.getData());
                                 intent.putExtra("plan", true);
+                                intent.putExtra("notification", true);
                                 intent.putExtra("work_time", dueNum);
-                                startActivity(intent);
-                                startActivityForResult(intent,Constants.SUMBIT);
+                                startActivityForResult(intent, Constants.SUMBIT);
+
                             }
                         } else {
-                            Toast.makeText(OrderDetailsActivity.this, "保存失败，请重试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PlanNotificationActivity.this, "保存失败，请重试", Toast.LENGTH_SHORT).show();
 
                         }
                     } catch (JSONException e) {
@@ -374,7 +365,6 @@ public class OrderDetailsActivity extends Activity {
                 }
             });
         }
-
 
 
     }

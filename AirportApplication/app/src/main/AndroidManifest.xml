@@ -95,7 +95,12 @@
             android:launchMode="singleTop"></activity>
         <activity android:name=".ApplyListActivity"
             android:launchMode="singleTop"></activity>
-     <!--   &lt;!&ndash; 个推SDK配置开始 &ndash;&gt;
+        <activity android:name=".NotificationActivity"
+            android:launchMode="singleTop"></activity>
+        <activity android:name=".PlanNotificationActivity"
+            android:launchMode="singleTop"></activity>
+        <service android:name="com.example.administrator.apiservice.AirportService"></service>
+        <!--   &lt;!&ndash; 个推SDK配置开始 &ndash;&gt;
         &lt;!&ndash; 配置的第三方参数属性 &ndash;&gt;
         <meta-data
             android:name="PUSH_APPID"

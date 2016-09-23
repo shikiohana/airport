@@ -60,6 +60,7 @@ public class MineFragment extends Fragment {
                     startActivity(new Intent(getContext(), NotApplyActivity.class));
                     break;
                 case R.id.notification_list:
+                    startActivity(new Intent(getContext(), NotificationActivity.class));
                     break;
                 case R.id.logout:
 
@@ -82,7 +83,8 @@ public class MineFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 TokenKeeper.clearToken(getContext());
-                System.exit(0);
+               startActivity(new Intent(getContext(),LoginActivity.class));
+                getActivity().finish();
             }
         });
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

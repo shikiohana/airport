@@ -27,19 +27,9 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
         this.list=list;
         setAllChecked(false);
 
-        inniRemarks();
     }
 
-    /**
-     * 初始化备注
-     */
-    private void inniRemarks(){
-        if(list.size()>0){
-            for(int i=0;i<list.size();i++){
-                getRemarks().put(i, "");
-            }
-        }
-    }
+
 
     /**
      *设置点击事件
@@ -65,12 +55,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
         return maps;
     }
 
-    public HashMap<Integer,String> getRemarks(){
-        if(remarks==null){
-            remarks=new HashMap<>();
-        }
-        return remarks;
-    }
+
 
     @Override
     public int getItemCount() {
