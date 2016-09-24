@@ -22,7 +22,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter {
     List<OrderDetails.DataBean.DetailBean> list;
     OrderDetails.DataBean.DetailBean dataBean;
     OnClicked onClicked;
-    HashMap<Integer,String> remarks;
+
     public OrderDetailsAdapter(List<OrderDetails.DataBean.DetailBean> list) {
         this.list=list;
         setAllChecked(false);

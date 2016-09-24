@@ -40,7 +40,7 @@ public class NotApplyActivity extends Activity {
     private TextView clear;
     private ImageView back;
     private AlertDialog alertDialog;
-
+    private TextView noResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +60,7 @@ public class NotApplyActivity extends Activity {
         notApplyList = (RecyclerView) findViewById(R.id.not_apply_list);
         clear = (TextView) findViewById(R.id.clear);
         back = (ImageView) findViewById(R.id.apply_back);
+        noResult=(TextView)findViewById(R.id.no_result);
         notApplyList.setLayoutManager(new LinearLayoutManager(this));
         notApplyList.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
         list = new ArrayList<>();
@@ -97,6 +98,11 @@ public class NotApplyActivity extends Activity {
             applyAdapter = new NotApplyAdapter(list);
             applyAdapter.setApplyClickListener(applyClickListener);
             notApplyList.setAdapter(applyAdapter);
+            if(list.size()==0){
+                noResult.setText("工单处理完毕");
+                noResult.setVisibility(View.VISIBLE);
+
+            }
         } catch (DbException e) {
             e.printStackTrace();
         }

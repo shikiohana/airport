@@ -7,18 +7,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.administrator.javabean.NotPlanNotification;
-import com.example.administrator.javabean.OrderDb;
 import com.example.administrator.javabean.Response;
+import com.example.administrator.javabean.UpAccept;
 import com.example.administrator.utils.Constants;
-import com.example.administrator.utils.SaveOrderData;
 import com.example.administrator.utils.TokenKeeper;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -32,12 +30,14 @@ public class NotPlanNotificationActivity extends Activity {
     private NotPlanNotification.DataBean dataBean;
     private String code;
     private EditText actulDue;
-    private boolean up = false;
-    double number;
+    private LinearLayout linearLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_not_plan_detail);
+        inni();
+        inniText();
     }
 
 
@@ -46,19 +46,27 @@ public class NotPlanNotificationActivity extends Activity {
      */
     private void inni() {
         next = (TextView) findViewById(R.id.next_step_not);
+        next.setText("拒绝");
+        next.setBackgroundResource(R.color.colorAccent);
         orderCode = (TextView) findViewById(R.id.order_code_not);
         startTime = (TextView) findViewById(R.id.start_time_not);
         endTime = (TextView) findViewById(R.id.end_time_not);
         save=(TextView)findViewById(R.id.save_not);
+        save.setText("接受");
+
         back = (ImageView) findViewById(R.id.back_not);
         content = (TextView) findViewById(R.id.order_detail_content_not);
         planDue = (TextView) findViewById(R.id.plan_due_not);
         actulDue = (EditText) findViewById(R.id.end_due_not);
+        actulDue.setEnabled(false);
         workResult = (TextView) findViewById(R.id.edit_detail_not);
+        workResult.setHint("");
+        workResult.setEnabled(false);
         back.setOnClickListener(onClickListener);
         next.setOnClickListener(onClickListener);
         save.setOnClickListener(onClickListener);
-        workResult.setOnClickListener(onClickListener);
+        linearLayout=(LinearLayout)findViewById(R.id.actual_line_not_plan);
+        linearLayout.setVisibility(View.GONE);
     }
 
     /**
@@ -66,16 +74,10 @@ public class NotPlanNotificationActivity extends Activity {
      */
     private void inniText() {
         Intent intent = getIntent();
-
         if (intent != null) {
-
             code = intent.getStringExtra(WorkOderFragment.DATABEAN);
-
-
-
             orderCode.setText(code);//工单编号
             getDetail(code);
-
         }
     }
 
@@ -102,6 +104,7 @@ public class NotPlanNotificationActivity extends Activity {
                     endTime.setText(dataBean.getDeviceName());//结束日期
                     content.setText(dataBean.getDoContentS() + "");//正文内容
                     planDue.setText(dataBean.getSchedulWork() + "（天）");
+                    content.setText(dataBean.getDoContentS());
 
                 }
             }
@@ -126,83 +129,49 @@ public class NotPlanNotificationActivity extends Activity {
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
             switch (view.getId()) {
                 case R.id.next_step_not:
-                    up=true;
-                    save();
-                    finish();
+                    done(true);
                     break;
                 case R.id.back_not:
                     finish();
                     break;
                 case R.id.save_not:
-                    up=false;
-                    save();
-
-                    break;
-                case R.id.edit_detail_not:
-                    Intent intent=new Intent(NotPlanNotificationActivity.this,EditActivity.class);
-                    String content=workResult.getText().toString();
-                    if(content==null){
-                        content="";
-                    }
-                    intent.putExtra("content",content);
-                    startActivityForResult(intent,1000);
+                    done(false);
                     break;
                 default:
-
-
                     break;
             }
 
         }
     };
 
+
+
     /**
-     * 提交，保存
+     * 接受或者拒绝工单
      */
-    private void save() {
-        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.SAVE_NOT_PLAN);
+
+
+    private void done(Boolean accept) {
+        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.RECEIVE);
         requestParams.addHeader("login", TokenKeeper.getUser(this));
         requestParams.addHeader("token", TokenKeeper.getToken(this));
         requestParams.setAsJsonContent(true);
-        JSONObject jsonObject = new JSONObject();
-        String num = actulDue.getText().toString();
-        number = 0;
-        if (!num.equals("")) {
-            number = Integer.parseInt(num);
-        }
-        try {
-            jsonObject.put("BillCode", code);
-            jsonObject.put("ActualWork", number);
-            jsonObject.put("DoResult", workResult.getText().toString());
-            jsonObject.put("DoResultEN", "");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        requestParams.setBodyContent(jsonObject.toString());
+        UpAccept upAccept = new UpAccept();
+        upAccept.setBillCode(code);
+        upAccept.setLogin(TokenKeeper.getUser(this));
+        upAccept.setReceive(accept);
+        Gson gson = new Gson();
+        String json = gson.toJson(upAccept);
+        requestParams.setBodyContent(json);
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                Log.i("result", result);
-                Gson gson = new Gson();
-                Response response = gson.fromJson(result, Response.class);
+                Gson gson1 = new Gson();
+                Response response = gson1.fromJson(result, Response.class);
                 if (response.isSuccess()) {
-                    OrderDb orderDb = new OrderDb();
-                    orderDb.code = code;
-                    orderDb.content = workResult.getText().toString();
-                    orderDb.isPlan = false;
-                    SaveOrderData.saveOrder(orderDb);
-                    if (up) {
-                        //如果需要提交
-                        Intent intent = new Intent(NotPlanNotificationActivity.this, UploadOrderActivity.class);
-                        intent.putExtra("orderDetail", dataBean);
-                        intent.putExtra("plan", false);
-                        intent.putExtra("work_time", number);
-                        intent.putExtra("notification", true);
-                        startActivityForResult(intent,Constants.SUMBIT);
-                    }
+                    finish();
                 }
             }
 
@@ -223,19 +192,4 @@ public class NotPlanNotificationActivity extends Activity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("ddd", requestCode + "~~~~~~~" + resultCode);
-        if(requestCode==resultCode){
-            if(resultCode==1000){
-                String content = data.getStringExtra("content");
-                Log.i("content",content);
-                workResult.setText(content);
-            }else if(resultCode==Constants.SUMBIT){
-                finish();
-            }
-
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 }

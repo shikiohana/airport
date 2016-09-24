@@ -242,6 +242,10 @@ public class Device {
                 this.Fault_DescriptionEN = Fault_DescriptionEN;
             }
 
+
+
+
+
             public List<ImageBean> getImage() {
                 return Image;
             }

@@ -80,4 +80,13 @@ public class HttpUtils {
 
     }
 
+
+    public static void translate(String cn,Context context,Callback.CommonCallback<String> callback){
+
+        RequestParams requestParams=new RequestParams(Constants.BASE_URL+Constants.TRANSLATE+cn);
+        requestParams.addHeader("login",TokenKeeper.getUser(context));
+        requestParams.addHeader("token",TokenKeeper.getToken(context));
+        x.http().get(requestParams,callback);
+
+    }
 }

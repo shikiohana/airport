@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.administrator.adapter.NotificaitonAdapter;
 import com.example.administrator.javabean.MyNotification;
@@ -34,6 +35,7 @@ public class NotificationActivity extends Activity {
     NotificaitonAdapter notificaitonAdapter;
     List<MyNotification.DataBean> list;
     MyNotification.DataBean dataBean;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class NotificationActivity extends Activity {
         title = (TextView) findViewById(R.id.title);
         clear = (TextView) findViewById(R.id.clear);
         back = (ImageView) findViewById(R.id.apply_back);
+        textView=(TextView)findViewById(R.id.no_result);
         notificationList = (RecyclerView) findViewById(R.id.not_apply_list);
         notificationList.setLayoutManager(new LinearLayoutManager(this));
         notificationList.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
@@ -85,11 +88,14 @@ public class NotificationActivity extends Activity {
                 notificaitonAdapter = new NotificaitonAdapter(list);
                 notificaitonAdapter.setNotificationClick(notificationClick);
                 notificationList.setAdapter(notificaitonAdapter);
+                if(list.size()==0){
+                    textView.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
-
+                Toast.makeText(NotificationActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
             }
 
             @Override

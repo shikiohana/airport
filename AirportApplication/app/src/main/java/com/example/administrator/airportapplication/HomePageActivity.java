@@ -1,5 +1,6 @@
 package com.example.administrator.airportapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,6 +11,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.example.administrator.adapter.HomePagerAdapter;
+import com.example.administrator.apiservice.AirportService;
+import com.example.administrator.utils.NotificationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +37,10 @@ public class HomePageActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         inni();
+        NotificationHelper.inniNotification(this);
         inniViewPager();
+        Intent intent=new Intent(HomePageActivity.this, AirportService.class);
+        startService(intent);
     }
 
     /**
@@ -126,4 +132,6 @@ public class HomePageActivity extends FragmentActivity {
         super.onBackPressed();
 
     }
+
+
 }

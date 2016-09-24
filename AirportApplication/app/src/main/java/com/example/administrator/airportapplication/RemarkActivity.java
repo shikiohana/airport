@@ -13,13 +13,21 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.administrator.adapter.AirportAdapter;
+import com.example.administrator.adapter.FaultSelectAdapter;
 import com.example.administrator.adapter.UpImageAdapter;
+import com.example.administrator.javabean.AirportBasic;
+import com.example.administrator.javabean.Device;
+import com.example.administrator.javabean.FaultSelect;
+import com.example.administrator.javabean.Translate;
 import com.example.administrator.javabean.UpResult;
 import com.example.administrator.utils.Constants;
 import com.example.administrator.utils.GridItemDecoration;
@@ -53,11 +61,16 @@ public class RemarkActivity extends Activity {
     private RecyclerView recyclerView;
     private List<String> list;
     private UpImageAdapter imageAdapter;
+    private AirportAdapter airportAdapter;
+    private FaultSelectAdapter faultSelectAdapter;
     private AlertDialog alertDialog;
     public static final int REQUEST_CODE = 12006;
-
+    private Spinner airportList, faultList;//机位
     private ProgressDialog progressDialog;
     private ArrayList<String> results, error;
+    private List<AirportBasic.DataBean> dataBeans;
+    private List<FaultSelect.DataBean> faults;
+    private Device.DataBean.FaultBean faultBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +87,11 @@ public class RemarkActivity extends Activity {
         back = (ImageView) findViewById(R.id.remark_back);
         done = (TextView) findViewById(R.id.done_remark);
         album = (TextView) findViewById(R.id.open_album);
+        done.setEnabled(false);
         remarkContent = (EditText) findViewById(R.id.edit_remark);
         recyclerView = (RecyclerView) findViewById(R.id.img_list);
+        airportList = (Spinner) findViewById(R.id.airport_list);
+        faultList = (Spinner) findViewById(R.id.fault_key_list);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.addItemDecoration(new GridItemDecoration(this));
         list = new ArrayList<>();
@@ -90,16 +106,97 @@ public class RemarkActivity extends Activity {
         Intent intent = getIntent();
         if (intent != null) {
             position = intent.getIntExtra(Constants.POSITION, 0);
-            content = intent.getStringExtra(Constants.CONTENT);
+            faultBean = intent.getParcelableExtra(Constants.FAULT_DETAILS);
+            content = faultBean.getFault_Description();
             if (content != null) {
                 remarkContent.setText(content);
             }
         }
+        inniFaultList();
+        inniAirport();
         inniRecycler(list);
         tvResult = new StringBuilder();
     }
 
-    private long exitTime;
+    /**
+     * 初始化机位
+     */
+    private void inniAirport() {
+        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.AIRPORTS);
+        requestParams.addHeader("login", TokenKeeper.getUser(this));
+        requestParams.addHeader("token", TokenKeeper.getToken(this));
+        x.http().get(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                AirportBasic airportBasic = gson.fromJson(result, AirportBasic.class);
+                dataBeans = airportBasic.getData();
+                airportAdapter = new AirportAdapter(RemarkActivity.this, dataBeans);
+                airportList.setAdapter(airportAdapter);
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                done.setEnabled(true);
+            }
+        });
+    }
+
+    private void inniFaultList() {
+        RequestParams requestParams = new RequestParams(Constants.BASE_URL + Constants.AIRPORTS);
+        requestParams.addHeader("login", TokenKeeper.getUser(this));
+        requestParams.addHeader("token", TokenKeeper.getToken(this));
+        x.http().get(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                FaultSelect faultSelect = gson.fromJson(result, FaultSelect.class);
+                faults = faultSelect.getData();
+                faultSelectAdapter = new FaultSelectAdapter(RemarkActivity.this, faults);
+                faultList.setAdapter(faultSelectAdapter);
+                faultList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        FaultSelect.DataBean dataBean = faults.get(i);
+                        faultBean.setFaultKey(dataBean.getFaultKey());
+                        remarkContent.setText(dataBean.getFaultDescription());
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                done.setEnabled(true);
+            }
+        });
+    }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -144,14 +241,61 @@ public class RemarkActivity extends Activity {
         String content = remarkContent.getText().toString();
         Log.i("content", content);
         if (content != null && results != null) {
-            Intent intent = new Intent();
-            intent.putExtra(Constants.CONTENT, content);
-            intent.putExtra(Constants.POSITION, position);
-            intent.putStringArrayListExtra(Constants.IMGS, results);
-            setResult(Constants.REQUEST, intent);
-            Log.i("done", "done");
+
+            faultBean.setPointName(dataBeans.get(airportList.getSelectedItemPosition()).getPointName());
+            faultBean.setAirPoint_AId(dataBeans.get(airportList.getSelectedItemPosition()).getAId());
+            faultBean.setFault_Description(content);
+            //faultBean.setFaultKey();
+
+            List<Device.DataBean.FaultBean.ImageBean> imgs = new ArrayList<>();
+            if (list.size() > 0) {
+                for (String url : list) {
+                    Device.DataBean.FaultBean.ImageBean imageBean = new Device.DataBean.FaultBean.ImageBean();
+                    imageBean.setIMGUrl(url);
+                    Log.i("url", url);
+                    imgs.add(imageBean);
+                }
+            }
+            faultBean.setImage(imgs);
+
+            HttpUtils.translate(content, RemarkActivity.this, new Callback.CommonCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson=new Gson();
+                    Translate translate=gson.fromJson(result,Translate.class);
+                    if(translate.isSuccess()){
+                        faultBean.setFault_DescriptionEN(translate.getData());
+                    }
+                    Intent intent =new Intent();
+                    //   intent.putExtra(Constants.CONTENT, content);
+                    intent.putExtra(Constants.POSITION, position);
+                    intent.putStringArrayListExtra(Constants.IMGS, results);
+                    // intent.putExtra(Constants.AIRPORT_NAME, dataBeans.get(airportList.getSelectedItemPosition()));
+                    //intent.putExtra(Constants.FAULT_DETAILS,)
+                    setResult(Constants.REQUEST, intent);
+                    Log.i("done", "done");
+                    finish();
+                }
+
+
+                @Override
+                public void onError(Throwable ex, boolean isOnCallback) {
+
+                }
+
+                @Override
+                public void onCancelled(CancelledException cex) {
+
+                }
+
+                @Override
+                public void onFinished() {
+
+                }
+            });
+
         }
-        finish();
+
     }
 
     /**
@@ -168,7 +312,7 @@ public class RemarkActivity extends Activity {
      * 返回键
      */
     private void back() {
-        if (!remarkContent.getText().toString().equals(content)) {
+        if (list.size()>0) {
             warning();
         } else {
             Intent intent = new Intent();

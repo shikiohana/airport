@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.administrator.adapter.ApplyAdapter;
 import com.example.administrator.javabean.Applys;
@@ -34,7 +35,7 @@ public class ApplyListActivity extends Activity {
     Applys applys;
     Applys.DataBean dataBean;
     ApplyAdapter applyAdapter;
-
+    TextView noResult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +49,7 @@ public class ApplyListActivity extends Activity {
     private void inni() {
         recyclerView = (RecyclerView) findViewById(R.id.my_apply_list);
         back = (ImageView) findViewById(R.id.my_apply_back);
+        noResult=(TextView)findViewById(R.id.no_result);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
         list = new ArrayList<>();
@@ -81,6 +83,10 @@ public class ApplyListActivity extends Activity {
                 applyAdapter = new ApplyAdapter(list);
                 applyAdapter.setApplyClick(applyClick);
                 recyclerView.setAdapter(applyAdapter);
+                if(list.size()==0){
+                    noResult.setText("没有申请记录");
+                    noResult.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override

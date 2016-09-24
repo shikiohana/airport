@@ -278,6 +278,7 @@ public class OrderDetailsActivity extends Activity {
         Log.i("cdoooo",requestCode+"-------"+resultCode);
         if (resultCode == resultCode) {
             switch (resultCode) {
+
                 case Constants.DETAIL:
                     ArrayList<Device.DataBean> list = data.getParcelableArrayListExtra(MoreDetailActivity.CHECKRESULT);
                     if (list != null && list.size() > 0) {
@@ -290,6 +291,7 @@ public class OrderDetailsActivity extends Activity {
                 case Constants.SUMBIT:
                     finish();
                     break;
+
                 default:
                     break;
             }

@@ -38,8 +38,21 @@
             android:textColor="@color/colorWhite"
             android:textSize="18sp" />
     </RelativeLayout>
-    <android.support.v7.widget.RecyclerView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/not_apply_list"></android.support.v7.widget.RecyclerView>
-</LinearLayout>
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/not_apply_list"></android.support.v7.widget.RecyclerView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/no_result"
+            android:text="@string/no_result"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:background="@color/colorWhite"
+            android:visibility="gone"/>
+    </RelativeLayout>
+  </LinearLayout>

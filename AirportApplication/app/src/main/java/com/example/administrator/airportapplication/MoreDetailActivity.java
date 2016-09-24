@@ -103,7 +103,6 @@ public class MoreDetailActivity extends Activity {
                     Device device = gson.fromJson(result, Device.class);
                     list = device.getData();
                     Log.i("list", list.size() + "");
-
                     deviceDetailAdapter = new DeviceDetailAdapter(list);
                     deviceDetailAdapter.setDeviceClicked(deviceClicked);
                     deviceList.setAdapter(deviceDetailAdapter);
@@ -131,19 +130,16 @@ public class MoreDetailActivity extends Activity {
         @Override
         public void clicked(View view, int i) {
             Intent intent = new Intent(MoreDetailActivity.this, RemarkActivity.class);
-            String content = "";
-            if (list.get(i).getFault() != null) {
-                content = list.get(i).getFault().getFault_Description();
-                if (content == null) {
-                    content = "";
-                }
 
-                intent.putExtra(Constants.CONTENT, content);
-                intent.putExtra(Constants.POSITION, i);
-                startActivityForResult(intent, Constants.REQUEST);
-            } else {
-                Toast.makeText(MoreDetailActivity.this, "没有更多内容", Toast.LENGTH_SHORT).show();
+
+            Device.DataBean.FaultBean faultBean = list.get(i).getFault();
+            if (faultBean == null) {
+                faultBean = new Device.DataBean.FaultBean();
             }
+
+            intent.putExtra(Constants.FAULT_DETAILS, faultBean);
+            intent.putExtra(Constants.POSITION, i);
+            startActivityForResult(intent, Constants.REQUEST);
 
 
         }
@@ -191,33 +187,10 @@ public class MoreDetailActivity extends Activity {
             switch (requestCode) {
                 case Constants.REQUEST:
                     int position = data.getIntExtra(Constants.POSITION, 0);
-                    String content = data.getStringExtra(Constants.CONTENT);
                     Device.DataBean dataBean = list.get(position);
-                    List<String> imgs = data.getStringArrayListExtra(Constants.IMGS);
-                    Device.DataBean.FaultBean faultBean = dataBean.getFault();
-
-                    if (imgs != null && content != null) {
-                        if (faultBean != null) {
-                            Log.i("data", dataBean.getFault() + "");
-                            Log.i("data", dataBean.getFault().getAId() + "");
-                            List<Device.DataBean.FaultBean.ImageBean> list = new ArrayList<>();
-                            if (imgs.size() > 0) {
-                                for (String url : imgs) {
-                                    Device.DataBean.FaultBean.ImageBean imageBean = new Device.DataBean.FaultBean.ImageBean();
-                                    imageBean.setIMGUrl(url);
-                                    Log.i("url", url);
-                                    list.add(imageBean);
-                                }
-                            }
-                            faultBean.setImage(list);
-                            faultBean.setFault_Description(content);
-                            Log.i("ccccc", content);
-                        } else if (content.equals("") && imgs.size() == 0) {
-                            Log.i("data", dataBean.getFault() + "");
-                            dataBean.setFault(null);
-                        }
-                    }
-
+                    //Device.DataBean.FaultBean faultBean = dataBean.getFault();
+                    Device.DataBean.FaultBean faultBean = data.getParcelableExtra(Constants.FAULT_DETAILS);
+                    dataBean.setFault(faultBean);
                     beans.add(dataBean);
                     deviceDetailAdapter.notifyDataSetChanged();
                     change = true;
@@ -249,7 +222,6 @@ public class MoreDetailActivity extends Activity {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     alertDialog.dismiss();
                     done();
-
                 }
             });
             builder.setPositiveButton("不保存", new DialogInterface.OnClickListener() {
@@ -276,7 +248,6 @@ public class MoreDetailActivity extends Activity {
      */
     private void done() {
         if (change) {
-
             Intent intent = new Intent();
             intent.putParcelableArrayListExtra(CHECKRESULT, beans);
             setResult(Constants.DETAIL, intent);

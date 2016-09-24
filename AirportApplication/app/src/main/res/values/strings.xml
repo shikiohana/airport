@@ -61,7 +61,7 @@
     <string name="work_description">处理结果:</string>
     <string name="on_fail">上传失败</string>
     <string name="work_result">处理结果</string>
-
+    <string name="airport_select">机位:</string>
     <!--设备详情-->
     <string name="device_name">设备名称:</string>
     <string name="device_spec">设备规格:</string>
@@ -88,6 +88,6 @@
     <string name="rewrite">申报</string>
     <string name="my_apply">我的申请</string>
 
-
+    <string name="no_result">没有新的通知</string>
 </resources>
 
